@@ -21,9 +21,6 @@ def scrape_page(transcript_href, filename):
 		if (re.search('[Uu]nder\s+[Cc]onstruction', table_text)):
 			print('[Page incomplete. Scraping aborted]')
 			return
-	
-		# Using the prettify method
-		# print(S.prettify())
 
 		list_of_lines =  S.find_all('dd')
 		infobox_text = S.find('aside', class_='portable-infobox').get_text()
@@ -56,8 +53,6 @@ def scrape_page(transcript_href, filename):
 			# (there was a bug in s4ep2 with "scene pauses" in the middle of dialog, this dodges it)
 			if (re.search('\[.*[Ss]cene.*\]', quote) and not bold):	
 				# if it does, store current list of chars at chars_in_scene[scene_num], clear list of chars, increment scene_num
-				# print(current_scene)
-				# print(quote)
 				chars_in_scene.append(current_scene)
 				current_scene = []
 				scene_num += 1
@@ -71,10 +66,8 @@ def scrape_page(transcript_href, filename):
 
 		# if current list of chars isn't empty after end of loop, repeat steps as if it's a new scene
 		if (len(current_scene) > 0):
-			# print(current_scene)
 			chars_in_scene.append(current_scene)
 
-		# print(chars_in_scene)
 
 		with open(filename, 'a', encoding='utf-8', newline='') as csvfile:
 			writer = csv.writer(csvfile, delimiter = '\t')
@@ -91,7 +84,6 @@ def scrape_page(transcript_href, filename):
 				txt = item.get_text()
 				said = txt.split(":", 1)
 				quote = said[len(said)-1].strip()
-				# print(quote)
 
 				# Data to be extracted/stored:
 				# season | ep_num | ep_title | air_date | line_num | character (blank if not dialog) | chars_in_scene (blank if scene change) | quote

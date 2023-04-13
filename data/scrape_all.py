@@ -25,9 +25,6 @@ if __name__ == "__main__":
     if html_doc:
         # Create BeautifulSoup object and specify the parser
         S = BeautifulSoup(html_doc.content , 'html.parser')
-    
-        # Using the prettify method
-        # print(S.prettify())
 
         # True if skipping past eps before/including skip_past_ep, False if starting from beginning
         # Note: order of episodes is dependent on which main_href is being used!
@@ -36,6 +33,7 @@ if __name__ == "__main__":
 
         # (for each tag that matches search function defined above)
         for a in S.find_all(href=transcript_search):
+            
             # Skip past all eps before and including skip_past_ep
             if (a['href'] == skip_past_ep):
                 skip = False
@@ -43,7 +41,7 @@ if __name__ == "__main__":
             elif (skip):
                 continue
             
-            print ("Found the URL:", a['href'])
+            print ("Found URL:", a['href'])
 
             # Call data processing script for each transcript page
             scrape_page.scrape_page(a['href'], 'adventure_time_all_eps.tsv')
