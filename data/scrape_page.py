@@ -86,14 +86,14 @@ def scrape_page(transcript_href, filename):
 				quote = said[len(said)-1].strip()
 
 				# Data to be extracted/stored:
-				# season | ep_num | ep_title | air_date | line_num | character (blank if not dialog) | chars_in_scene (blank if scene change) | quote
+				# season | ep_num | scene_num | ep_title | air_date | line_num | character (blank if not dialog) | chars_in_scene (blank if scene change) | quote
 
 				if (re.search('\[.*[Ss]cene.*\]', quote) and not bold):
 					# Scene change - increment scene index and store empty string for chars_in_scene to indicate scene change
 					scene_num += 1
-					writer.writerow([season, ep_num, ep_title, air_date, line_num, character, '', quote])
+					writer.writerow([season, ep_num, scene_num, ep_title, air_date, line_num, character, '', quote])
 				else:
-					writer.writerow([season, ep_num, ep_title, air_date, line_num, character, ', '.join(chars_in_scene[scene_num]), quote])
+					writer.writerow([season, ep_num, scene_num, ep_title, air_date, line_num, character, ', '.join(chars_in_scene[scene_num]), quote])
 				
 				line_num += 1
 	else:
