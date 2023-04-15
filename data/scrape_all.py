@@ -44,7 +44,7 @@ if __name__ == "__main__":
             print ("Found URL:", a['href'])
 
             # Call data processing script for each transcript page
-            scrape_page.scrape_page(a['href'], 'adventure_time_all_eps.tsv')
+            scrape_page.scrape_page(a['href'], 'adventure_time_all_eps_with_scene_num.tsv')
 
             # Add timer between calls for each page 0.5 - 3s, random (will hopefully prevent getting blocked)
             wait_time = random.random() * 2.5 + 0.5
