@@ -59,24 +59,48 @@ class WordCloud{
     getAllChartacterWords(){
         let vis = this;
         let characterWords = [];
+
+        //removes anything within () 
+        let regEx = / *\([^)]*\) */g;
+        
+        //list of stop words
+        let stopwords = ["", "a","about", "it", "after", "again", "against", "all", "am", "an", "and", "any","are","aren't","as","at","be","because","been","before","being","below","between","both","but","by","can't","cannot","could","couldn't","did","didn't","do","does","doesn't","doing","don't","down","during","each","few","for","from","further","had","hadn't","has","hasn't","have","haven't","having","he","he'd","he'll","he's","her","here","here's","hers","herself","him","himself","his","how","how's","i","i'd","i'll","i'm","i've","if","in","into","is","isn't","it","it's","its","itself","let's","me","more","most","mustn't","my","myself","no","nor","not","of","off","on","once","only","or","other","ought","our","ours","ourselves","out","over","own","same","shan't","she","she'd","she'll","she's","should","shouldn't","so","some","such","than","that","that's","the","their","theirs","them","themselves","then","there","there's","these","they","they'd","they'll","they're","they've","this","those","through","to","too","under","until","up", "us", "get", "got", "very","was","wasn't","we","we'd","we'll","we're","we've","were","weren't","what","what's","when","when's","where","where's","which","while","who","who's","whom","why","why's","with","won't","would","wouldn't","you","you'd","you'll","you're","you've","your","yours","yourself","yourselves"];
+
+
         vis.data.forEach(d => {
-           // console.log(d.character, vis.character);
 
             if(d.character == vis.character){
-                let quote = d.quote.split(" ");
+                //get rid of punctuation and transform [] into () bc regExs have weird rules with []
+                let quote = d.quote.replaceAll("!", "").replaceAll("[", "(").replaceAll("]", ")").replace("?", "").replace(".", "").replaceAll(",", "");
+                
+                //gets rid of all the unspoken text
+                quote = quote.replaceAll(regEx, "");
+
+                //splits the string by word
+                quote = quote.split(" ");
+
+                //pushes all of the words into the character word array
                 quote.forEach(d =>{
                     characterWords.push(d);
                 })
-                //characterWords.push(d.quote.split(" "));
-               // console.log(d.quote.split(" "))
             }  
         });
 
-        characterWords = d3.rollup(characterWords, v => v.length, d => d);
-        characterWords = Array.from(characterWords, function(d){return {word: d[0], size: d[1]};});
 
-        console.log(characterWords);
-        return characterWords;
+      //Count frequency of words
+        characterWords = d3.rollup(characterWords, v => v.length, d => d.toUpperCase());
+        let characterWordArray = Array.from(characterWords, function(d){return {word: d[0], size: d[1]};});
+
+        //remove stop words
+        stopwords.forEach(s =>{
+            characterWordArray = characterWordArray.filter(function(w) {return w.word.toLowerCase() !== s});
+        });
+
+        //sort by frequency
+        let characterWordsSorted = characterWordArray.slice().sort((a,b) => d3.descending(a.size, b.size));
+
+       // console.log(characterWordsSorted);
+        return characterWordsSorted;
 
     }
 }
