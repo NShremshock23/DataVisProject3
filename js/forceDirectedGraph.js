@@ -39,6 +39,7 @@ class ForceDirectedGraph {
             .data(vis.data.nodes)
             .join('circle')
               .attr('r', 5)
+              .attr('class', 'node')
 
         vis.textElements = vis.chart.append('g')
             .selectAll('text')
@@ -49,7 +50,7 @@ class ForceDirectedGraph {
                 .attr('dx', 15)
                 .attr('dy', 4)
 
-        vis.simulation.force('link', d3.forceLink().id(l => l.id).strength(l => l.strength / 1000))
+        vis.simulation.force('link', d3.forceLink().id(l => l.id).strength(l => l.strength))
 
         vis.linkElements = vis.chart.append('g')
             .selectAll('line')
@@ -57,6 +58,7 @@ class ForceDirectedGraph {
             .join('line')
             .attr('stroke-width', 1)
             .attr('stroke', '#E5E5E5')
+            .attr('class', 'link')
 
         vis.simulation.force('link').links(vis.data.links)
 
