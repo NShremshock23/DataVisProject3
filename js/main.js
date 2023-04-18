@@ -15,6 +15,7 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
 
         //need list of characters in more than one scene
         data.characters = data.scenes.map(i => i[1]).flat()
+        console.log(data.characters)
         let characterFreq = []
         let frequentCharacters = {}
 
@@ -66,25 +67,32 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
             }
         })
 
-        console.log(data.links)
+        // console.log(data.links)
 
         data.links.forEach(d => {
             if(d.strength == 1){
-                console.log(data.links.splice(data.links.indexOf(d), 1))
+                // console.log(data.links.splice(data.links.indexOf(d), 1))
                 data.links.splice(data.links.indexOf(d), 1)
             }
             
             d.strength = (1.0 / d.strength)
         })
         
-    console.log(data.links)
+    // console.log(data.links)
 
-        let forceDirectedGraph = new ForceDirectedGraph({
-			parentElement: '#force-directed-graph',
-			'containerHeight': 1000,
-			'containerWidth': 1000
+        // let forceDirectedGraph = new ForceDirectedGraph({
+		// 	parentElement: '#force-directed-graph',
+		// 	'containerHeight': 1000,
+		// 	'containerWidth': 1000
+		// }, data)
+		// forceDirectedGraph.updateVis()
+
+        let scatterplot = new Scatterplot({
+			parentElement: '#scatterplot',
+			'containerHeight': 600,
+			'containerWidth': 800
 		}, data)
-		forceDirectedGraph.updateVis()
+		scatterplot.updateVis()
     })
 
     let getId = (d) => d.toLowerCase().replace(/\s+/g, '')
