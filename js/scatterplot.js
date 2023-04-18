@@ -136,10 +136,25 @@ class Scatterplot {
             .data(vis.characters)
             .join('circle')
                 .attr('class', 'point')
-                .attr('r', 2)
+                .attr('r', 4)
                 .attr('cy', d => vis.yScale(vis.yValue(d)))
                 .attr('cx', d => vis.xScale(vis.xValue(d)))
-                .attr('fill', 'steelblue');
+                .attr('fill', 'steelblue')
+                .on('mouseover', (event,d) => {
+                    d3.select('#tooltip')
+                        .style('display', 'block')
+                        .style('left', (event.pageX + 10) + 'px')   
+                        .style('top', (event.pageY + 10) + 'px')
+                        .style('text-align', 'left')
+                        .html(`
+                            <div class="tooltip-title">${d.name}</div>
+                            <div>Episode Appearances: ${d.episodes}</div>
+                            <div>Lines of Dialog: ${d.lines}</div>
+                        `);
+                })
+                .on('mouseleave', () => {
+                    d3.select('#tooltip').style('display', 'none');
+                })
 
         // Update axes
         vis.xAxisGroup.call(vis.xAxis);
