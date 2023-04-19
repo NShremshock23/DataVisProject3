@@ -1,13 +1,42 @@
+var finnColor = '#1897CA';
+var bubblegumColor = '#FF61D0';
+var jakeColor = '#FF971A';
+var iceColor = '#B4EFEB';
+var BMOColor = '#D6FFDC';
+var vampireColor = '#851F1D';
+var flameColor = '#FF4006';
+var lumpyColor = '#CC93FA';
+var rainacornColor = '#FFB1FD';
+
+
+
 class WordCloud{
     constructor(_data){
+        this.finnColor = '#1897CA';
+        this.bubblegumColor = '#FF61D0';
+        this.jakeColor = '#FF971A';
+        this.iceColor = '#344980';
+        this.BMOColor = '#59877C';
+        this.vampireColor = '#851F1D';
+        this.flameColor = '#FF4006';
+        this.lumpyColor = '#CC93FA';
+        this.rainacornColor = '#FFB1FD';
+        this.peppermintColor = '#B52C33';
+
+       // Lumpy Space Princess
         this.allData = _data;
         this.data = _data;
-        this.character = "Finn";
+
+        this.characters = [];
+        this.character = "BMO";
+
+        this.seasons = [];
+        this.season = "all";
 
         this.words = this.getAllChartacterWords();
         this.allWords = this.words;
 
-        this.color = "#89CFF0";
+       // this.color = this.getCharacterColor();
   
 
         this.innitVis();
@@ -25,6 +54,14 @@ class WordCloud{
         .attr("height", vis.height + vis.margin.left + vis.margin.right)
         .append("g").attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
 
+
+        vis.fontScale = d3.scaleLinear()
+        .domain([d3.max(vis.words, d=> d.size), d3.min(vis.words, d => d.size)])
+        .range([ 70, 10]);
+
+        vis.colorScale = d3.scaleOrdinal()
+        .domain(["Finn", "Jake", "Princess Bubblegum", "Ice King", "BMO", "Lady Rainicorn", "Peppermint Butler", "LSP", "Marcline"])
+        .range([vis.finnColor, vis.jakeColor, vis.bubblegumColor, vis.iceColor, vis.BMOColor, vis.rainacornColor, vis.peppermintColor, vis.lumpyColor, vis.vampireColor])
         vis.updateVis();
     }
     updateVis(){
@@ -33,27 +70,27 @@ class WordCloud{
         vis.layout = d3.layout.cloud().size([vis.width, vis.height])
         .words(vis.words.map(function(d) {return {text: d.word, size:d.size};}))
         .padding(5).rotate(function() {return ~~(Math.random() * 2) * 90;})
-        .fontSize(function(d) { return d.size;})
-        .on("end", vis.draw());
+        .fontSize(function(d) { return vis.fontScale(d.size);})
+        .on("end", draw);
 
         vis.layout.start();
 
-
-    }
-
-    draw(){
-        let vis = this;
-
-        vis.svg.append("g")
-        .attr("transform", "translate(" + vis.width / 2 + "," + vis.height / 2 + ")")
-        .selectAll("text")
-        .data(vis.words)
-        .enter().append("text")
-        .style("font-size", function(d) { return d.size;})
-        .style("fill", vis.color)
-        .attr("text-anchor", "middle")
-        .style("font-family", "Imapct")
-        .text(function(d) { return d.text; });
+        function draw(words) {
+            console.log(words);
+            vis.svg
+              .append("g")
+                .attr("transform", "translate(" + vis.layout.size()[0] / 2 + "," + vis.layout.size()[1] / 2 + ")")
+                .selectAll("text")
+                  .data(words)
+                .enter().append("text")
+                  .style("font-size", function(d) { return d.size + "px"; })
+                  .style("fill", vis.colorScale(vis.character))
+                  .attr("text-anchor", "middle")
+                  .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                  })
+                  .text(function(d) { return d.text; });
+          }
     }
 
     getAllChartacterWords(){
@@ -71,7 +108,7 @@ class WordCloud{
 
             if(d.character == vis.character){
                 //get rid of punctuation and transform [] into () bc regExs have weird rules with []
-                let quote = d.quote.replaceAll("!", "").replaceAll("[", "(").replaceAll("]", ")").replace("?", "").replace(".", "").replaceAll(",", "");
+                let quote = d.quote.replaceAll("!", "").replaceAll("[", "(").replaceAll("]", ")").replaceAll("?", "").replaceAll(".", "").replaceAll(",", "");
                 
                 //gets rid of all the unspoken text
                 quote = quote.replaceAll(regEx, "");
@@ -99,8 +136,15 @@ class WordCloud{
         //sort by frequency
         let characterWordsSorted = characterWordArray.slice().sort((a,b) => d3.descending(a.size, b.size));
 
-       // console.log(characterWordsSorted);
-        return characterWordsSorted;
+        let finalArray =new Array;
+        let i = 0;
+        while(i < 50){
+            finalArray.push(characterWordsSorted[i]);
+            i++;
+
+        }
+        console.log(finalArray);
+        return finalArray;
 
     }
 }
