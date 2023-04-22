@@ -1,9 +1,28 @@
-.node {
-    z-index: 100;
+.label {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 
-.link {
-    z-index: -100;
+.node:hover, .label:hover {
+    cursor:pointer;
+}
+
+#force-directed-graph {
+    zoom: 75%;
+}
+
+#tooltip {
+    position: absolute;
+    background: #f6eeee;
+    box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
+    border: 1px solid #dddddd;
+    min-width: 30px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px;
+    color: #333;
 }
 
 #tooltip {
