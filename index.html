@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdVisture Time or something funnier</title>
+
+    <link rel="stylesheet" href="css/graph.css">
     <link rel="stylesheet" href="css/ZdogPractice.css">
 </head>
 <body>
-    <p>Hi there</p>
-
     <canvas class="finn" width="200" height="200"></canvas>
     <canvas class="jake" width="200" height="200"></canvas>
     <div id="seasons">
@@ -35,6 +35,7 @@
         <button class="charBtn" id="TreeTrunk"><img src="pictures/TreeTrunk.png" height="100" width="100" id="treePic"></button>
     </div>
     <div id="wordCloud"></div>
+    <svg id="force-directed-graph"></svg>  
 
     <script src="js/zdog.dist.js"></script>
     <script src="js/ZdogPractice.js"></script>
@@ -46,5 +47,6 @@
     <script src="js/wordCloud.js"></script>
     
     <script src="js/main.js"></script>
+    <script src="js/forceDirectedGraph.js"></script>
 </body>
 </html>
