@@ -1,5 +1,7 @@
 let data
-let nonCharacters = ["woman", "man","audience", "crowd", "alltheanimals", "voice", "unknownvoice", "malevoice", "episodeends.", "episodeends", "all", "everyoneelse", "everyone", "both", ""]
+let nonCharacters = ["monster", "woman", "man","audience", "crowd", "alltheanimals", "voice", "unknownvoice", "malevoice", "episodeends.", "episodeends", "all", "everyoneelse", "everyone", "both", ""]
+let mainCharacters = ["princessbubblegum", "marceline", "bmo", "iceking", "flameprincess", "lumpyspaceprincess"]
+
 d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
     .then(_data => {
         data = _data
@@ -40,7 +42,7 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
         }
 
         // Turning frequent characters into a list, sorting, and getting top 50
-        data.frequentCharacters = Object.entries(data.frequentCharacters).sort((a,b) => b[1] - a[1]).splice(0,100)
+        data.frequentCharacters = Object.entries(data.frequentCharacters).sort((a,b) => b[1] - a[1]).slice(0, 100)
         
         data.links = []
         data.nodes = []
@@ -56,23 +58,27 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
                 if(!data.nodes.some(n => getId(n.label) == targetId)) {
                     data.nodes.push({id: targetId, label: target, sceneCount: data.characterFreq[targetId]})
                 }
-
                 // Loop through the frequent characters from the current scene again (not including the target character) to be a link source
                 for(let source of d[1].filter(c => getId(c) != targetId && data.frequentCharacters.some(f => getId(f[0]) == getId(c)))) {
 
                     let sourceId = getId(source) // get id form of source
 
-                    // If the two characters have an existing link, increment the strength
-                    if(data.links.some(l => l.target == targetId && l.source == sourceId))
-                        data.links.filter(l => (l.target == targetId && l.source == sourceId))[0].strength += 1
+                    // if((!((sourceId == "finn" || sourceId == "jake") || (targetId == "finn" || targetId == "jake"))
+                    //     || mainCharacters.includes(targetId) && (sourceId == "finn" || sourceId == "jake"))
+                    //     || (mainCharacters.includes(sourceId) && (targetId == "finn" || targetId == "jake"))){
+                        // If the two characters have an existing link, increment the strength
+                        if(data.links.some(l => l.target == targetId && l.source == sourceId))
+                            data.links.filter(l => (l.target == targetId && l.source == sourceId))[0].strength += 1
+    
+                        // If the characters have a link in the opposite direction, skip (avoids double dipping links)
+                        else if(data.links.some(l => (l.target == sourceId && l.source == targetId)))
+                            continue
+    
+                        // Otherwise create a new link
+                        else 
+                            data.links.push({ target: targetId, source: sourceId, strength: 1})
 
-                    // If the characters have a link in the opposite direction, skip (avoids double dipping links)
-                    else if(data.links.some(l => (l.target == sourceId && l.source == targetId)))
-                        continue
-
-                    // Otherwise create a new link
-                    else 
-                        data.links.push({ target: targetId, source: sourceId, strength: 1 })
+                    // }
                 }
             }
         })

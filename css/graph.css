@@ -1,7 +1,3 @@
-.node {
-    z-index: 100;
-}
-
-.link {
-    z-index: -100;
+.node:hover, .label:hover {
+    cursor:pointer;
 }

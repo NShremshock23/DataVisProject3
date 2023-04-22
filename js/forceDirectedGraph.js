@@ -39,10 +39,9 @@ class ForceDirectedGraph {
         // Force link: Sets link force based on strength
         // On Tick: updates element position each tick (gives the fun animation)
         vis.simulation = d3.forceSimulation(vis.data.nodes)
-            .force('charge', d3.forceManyBody().strength(-400))
-            .force('collide', d3.forceCollide().strength(n => d3.radiusScale(n.sceneCount) + 1))
+            .force('charge', d3.forceManyBody().strength(-800))
             .force('center', d3.forceCenter(vis.width / 2, vis.height / 2))
-            .force('link', d3.forceLink().id(l => l.id).strength(l => l.strength * 2))
+            .force('link', d3.forceLink().id(l => l.id).strength(l => l.strength * 2).distance(30))
             .on('tick', ticked);
 
         // Applies links to the link force
@@ -93,13 +92,49 @@ class ForceDirectedGraph {
             .data(vis.data.nodes)
             .join('text')
             .text(n => n.label)
+                .attr('class', "label")
                 .attr('font-size', 15)
                 .attr('text-anchor', "middle")
                 .attr('dx', d => 0)
                 .attr('dy', d => -4 - vis.radiusScale(d.sceneCount))
+
+        vis.nodeElements.on('click', selected => vis.selectNode(selected))
+        vis.textElements.on('click', selected => vis.selectNode(selected))
+
+        vis.selectNode = (selected) => {
+            const neighbors = vis.getNeighbors(selected.target.__data__, vis.data.links)
+
+            console.log(neighbors)
+
+            vis.nodeElements
+                .attr('opacity', node => vis.getNodeOpacity(node, neighbors)) 
+            vis.linkElements
+                .attr('stroke', link => vis.getLinkColor(selected.target.__data__, link))
+        }
     }
 
     renderVis(){
         // Nothing yet
+    }
+
+    getNeighbors(node, links) {
+        return links.reduce((neighbors, link) => {
+            if(link.target.id === node.id)
+                neighbors.push(link.source.id)
+            else if (link.source.id === node.id)
+                neighbors.push(link.target.id)
+            return neighbors
+        }, [node.id])
+    }
+
+    getNodeOpacity(node, neighbors) {
+        console.log(neighbors.indexOf(node.id))
+        if (neighbors.indexOf(node.id) != -1)
+            return 0.75
+        return 0.5
+    }
+    
+    getLinkColor(node, link) {
+        return (link.target.id === node.id || link.source.id === node.id) ? '#565656' : 'transparent'
     }
 }
