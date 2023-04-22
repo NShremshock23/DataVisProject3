@@ -6,11 +6,61 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
     .then(_data => {
         data = _data
 
+        data.characterData = [] // Array of objects containing character-specific stats (lines/words spoken, # episodes, etc.)
+
         data.forEach(d => {
             d.seasonEpisodeScene = d.season + "-" + d.ep_num + "-" + d.scene_num
             d.season = +d.season;
             d.ep_num  = +d.ep_num;
             d.scene_num = +d.scene_num;
+
+            if (d.character != '' &&
+                !(nonCharacters.includes(getId(d.character)) || // filters out "all" and similar characters
+                d.character.includes('&') ||
+                d.character.toLowerCase().includes(' and ') || // filters out characters that are actually multiple speaking at once
+                d.character.toLowerCase().includes('and ') || // filters out characters that are actually multiple speaking at once
+                d.character.toLowerCase().includes('/'))) {
+
+                // Find character if they already exist in characterData[]
+                let character = data.characterData.find((o, i) => { 
+                    if (o.id == getId(d.character)) {
+                        // Count line, words
+                        o.lines += 1
+                        o.words += countAllQuoteWords(d)
+                        
+                        // Count the ep if it hasn't already been counted for current character (ASSUMES CHRONOLOGICAL DATA ORDER)
+                        if (o.lastSeason < d.season || (o.lastSeason == d.season && o.lastEp < d.ep_num)) {
+                            o.episodes++
+                            o.scenes++
+                            o.lastSeason = d.season
+                            o.lastEp = d.ep_num
+                            o.lastScene = d.scene_num
+                        }
+                        // Count scenes within same ep
+                        else if (o.lastScene < d.scene_num) {
+                            o.scenes++
+                            o.lastScene = d.scene_num
+                        }
+
+                        return true
+                    }
+                })
+
+                // Add a record for the current character if they don't already have one
+                if (!character) {
+                    data.characterData.push({
+                        'id': getId(processCharacters(d.character)),
+                        'name': processCharacters(d.character),
+                        'episodes': 1,
+                        'scenes': 1,
+                        'lines': 1,
+                        'words': countAllQuoteWords(d),
+                        'lastSeason': d.season,
+                        'lastEp': d.ep_num,
+                        'lastScene': d.scene_num
+                    })
+                }
+            }
         });
 
         // Get list of scenes in format {season-episode-scene, characters in scene}
@@ -109,6 +159,25 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
     })
 
     let getId = (d) => d.toLowerCase().replace(/\s+/g, '')
+
+    function countAllQuoteWords(d) {
+        let vis = this
+        
+        // Get rid of punctuation and transform [] into () bc regExs have weird rules with []
+        let quoteWords = d.quote.replaceAll("!", "").replaceAll("[", "(").replaceAll("]", ")").replaceAll("?", "").replaceAll(".", "").replaceAll(",", "");
+        
+        // Catches anything within () 
+        let regEx = / *\([^)]*\) */g;
+
+        // Gets rid of all the unspoken text
+        quoteWords = quoteWords.replaceAll(regEx, "");
+
+        // Splits the string by word
+        quoteWords = quoteWords.split(" ");
+
+        // Return the number of words
+        return quoteWords.length 
+    }
 
     //Take in character, get it's id form and return it's actual character
     function processCharacters(character) {
