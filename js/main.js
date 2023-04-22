@@ -99,6 +99,13 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
 			'containerWidth': 2000
 		}, data)
 		forceDirectedGraph.updateVis()
+
+        let scatterplot = new Scatterplot({
+			parentElement: '#scatterplot',
+			'containerHeight': 600,
+			'containerWidth': 800
+		}, data)
+		scatterplot.updateVis()
     })
 
     let getId = (d) => d.toLowerCase().replace(/\s+/g, '')
