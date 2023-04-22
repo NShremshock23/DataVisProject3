@@ -33,13 +33,15 @@ class ForceDirectedGraph {
     updateVis() {
         let vis = this;
 
+        vis.selectedNode = null;
+
         // Create simulation
         // Force Many Body: Makes elements attract(+) or repel(-) each other
         // Force center: Sets center of gravity
         // Force link: Sets link force based on strength
         // On Tick: updates element position each tick (gives the fun animation)
         vis.simulation = d3.forceSimulation(vis.data.nodes)
-            .force('charge', d3.forceManyBody().strength(-800))
+            .force('charge', d3.forceManyBody().strength(-500))
             .force('center', d3.forceCenter(vis.width / 2, vis.height / 2))
             .force('link', d3.forceLink().id(l => l.id).strength(l => l.strength * 2).distance(30))
             .on('tick', ticked);
@@ -102,14 +104,26 @@ class ForceDirectedGraph {
         vis.textElements.on('click', selected => vis.selectNode(selected))
 
         vis.selectNode = (selected) => {
-            const neighbors = vis.getNeighbors(selected.target.__data__, vis.data.links)
-
-            console.log(neighbors)
-
-            vis.nodeElements
-                .attr('opacity', node => vis.getNodeOpacity(node, neighbors)) 
-            vis.linkElements
-                .attr('stroke', link => vis.getLinkColor(selected.target.__data__, link))
+            if(vis.selectedNode == null || vis.selectedNode.target.__data__ != selected.target.__data__) {
+                const neighbors = vis.getNeighbors(selected.target.__data__, vis.data.links)
+    
+                vis.nodeElements
+                    .attr('opacity', node => vis.getNodeOpacity(node, neighbors)) 
+                vis.textElements
+                    .attr('fill', node => vis.getTextColor(node, neighbors))
+                vis.linkElements
+                    .attr('stroke', link => vis.getLinkColor(selected.target.__data__, link))
+                vis.selectedNode = selected;
+            }
+            else {
+                vis.nodeElements
+                    .attr('opacity', 0.5) 
+                vis.textElements
+                    .attr('fill', 'black')
+                vis.linkElements
+                    .attr('stroke', '#E5E5E5')
+                vis.selectedNode = null;
+            }
         }
     }
 
@@ -128,7 +142,6 @@ class ForceDirectedGraph {
     }
 
     getNodeOpacity(node, neighbors) {
-        console.log(neighbors.indexOf(node.id))
         if (neighbors.indexOf(node.id) != -1)
             return 0.75
         return 0.5
@@ -136,5 +149,11 @@ class ForceDirectedGraph {
     
     getLinkColor(node, link) {
         return (link.target.id === node.id || link.source.id === node.id) ? '#565656' : 'transparent'
+    }
+
+    getTextColor(node, neighbors) {
+        if (neighbors.indexOf(node.id) != -1)
+            return 'black'
+        return 'transparent'
     }
 }
