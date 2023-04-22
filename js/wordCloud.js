@@ -1,15 +1,3 @@
-var finnColor = '#1897CA';
-var bubblegumColor = '#FF61D0';
-var jakeColor = '#FF971A';
-var iceColor = '#B4EFEB';
-var BMOColor = '#D6FFDC';
-var vampireColor = '#851F1D';
-var flameColor = '#FF4006';
-var lumpyColor = '#CC93FA';
-var rainacornColor = '#FFB1FD';
-
-
-
 class WordCloud{
     constructor(_data){
         this.finnColor = '#1897CA';
@@ -21,19 +9,70 @@ class WordCloud{
         this.flameColor = '#FF4006';
         this.lumpyColor = '#CC93FA';
         this.rainacornColor = '#FFB1FD';
-        this.peppermintColor = '#B52C33';
+        this.treeTrunkColor = '#B52C33';
 
        // Lumpy Space Princess
         this.allData = _data;
         this.data = _data;
 
-        this.characters = [];
-        this.character = "BMO";
+        this.finnButton = document.getElementById('Finn');
+        this.jakeButton = document.getElementById('Jake');
+        this.bubblegumButton = document.getElementById('bubblegum');
+        this.marcilineButton = document.getElementById('Marciline');
+        this.BMOButton = document.getElementById('BMO');
+        this.LSPButton = document.getElementById('LSP');
+        this.iceButton = document.getElementById('IceKing');
+        this.flamePrincessButton = document.getElementById('flamePrincess');
+        this.rainicornButton = document.getElementById('Rainicorn');
+        this.treeTrunkButton = document.getElementById('TreeTrunk');
+
+        this.finnPic = document.getElementById('finnPic');
+        this.jakePic = document.getElementById('jakePic');
+        this.bubblegumPic = document.getElementById('bubblegumPic');
+        this.marclinePic = document.getElementById('marclinePic');
+        this.BMOPic = document.getElementById('BMOPic');
+        this.LSPPic= document.getElementById('LSPPic');
+        this.icePic = document.getElementById('icePic');
+        this.flamePic = document.getElementById('flamePic');
+        this.rainicornPic = document.getElementById('rainicornPic');
+        this.treeTrunkPic = document.getElementById('treePic');
+
+        let pictures = [this.finnPic, this.jakePic, this.bubblegumPic, this.marclinePic, this.BMOPic, this.LSPPic, this.icePic, this.flamePic, this.rainicornPic, this.treePic];
+
+        let chars = ["Finn", "Jake","Princess Bubblegum", "Marceline", "BMO", "LSP","Ice King", "Flame Princess", "Rainicorn", "Tree Trunks"];
+        let picArr = new Map;
+        let j = 0;
+        pictures.forEach(b =>{
+            picArr.set(b,chars[j]);
+            j++; 
+        });
+
+        this.pictureArray = Array.from(picArr, function(d){return {picture: d[0], character: d[1]};});
+        console.log(this.pictureArray);
+
+
+        let buttons = [this.finnButton, this.jakeButton, this.bubblegumButton, this.marcilineButton, this.BMOButton, this.LSPButton, this.iceButton, this.flamePrincessButton, this.rainicornButton, this.treeTrunkButton];
+
+       // let chars = ["Finn", "Jake","Princess Bubblegum", "Marcline", "BMO", "LSP","Ice King", "Flame Princess", "Rainicorn", "Tree Trunks"];
+        let buttonArr = new Map;
+        let i = 0;
+        buttons.forEach(b =>{
+            buttonArr.set(b,chars[i]);
+            i++; 
+        });
+
+        this.buttonArray = Array.from(buttonArr, function(d){return {button: d[0], character: d[1], status: true};});
+        console.log(this.buttonArray);
+
+
+
+        this.characters = ["Finn", "BMO", "Princess Bubblegum","Flame Princess", "Jake", "LSP", "Ice King", "Marceline", "Lady Rainicorn", "Tree Trunks"];
+        this.character = "Finn";
 
         this.seasons = [];
         this.season = "all";
 
-        this.words = this.getAllChartacterWords();
+        this.words = this.getAllWords();
         this.allWords = this.words;
 
        // this.color = this.getCharacterColor();
@@ -55,45 +94,134 @@ class WordCloud{
         .append("g").attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
 
 
-        vis.fontScale = d3.scaleLinear()
-        .domain([d3.max(vis.words, d=> d.size), d3.min(vis.words, d => d.size)])
-        .range([ 70, 10]);
+        //console.log(vis.words)
+        // vis.fontScale = d3.scaleLinear()
+        // .domain([d3.max(vis.words, d=> d.size), d3.min(vis.words, d => d.size)])
+        // .range([ 70, 10]);
 
         vis.colorScale = d3.scaleOrdinal()
-        .domain(["Finn", "Jake", "Princess Bubblegum", "Ice King", "BMO", "Lady Rainicorn", "Peppermint Butler", "LSP", "Marcline"])
-        .range([vis.finnColor, vis.jakeColor, vis.bubblegumColor, vis.iceColor, vis.BMOColor, vis.rainacornColor, vis.peppermintColor, vis.lumpyColor, vis.vampireColor])
+        .domain(["Finn", "Jake", "Princess Bubblegum", "Ice King", "BMO", "Lady Rainicorn", "Tree Trunks", "LSP", "Marceline", "Flame Princess"])
+        .range([vis.finnColor, vis.jakeColor, vis.bubblegumColor, vis.iceColor, vis.BMOColor, vis.rainacornColor, vis.treeTrunkColor, vis.lumpyColor, vis.vampireColor, vis.flameColor]);
+
+        vis.buttonArray.forEach(b =>{
+            b.button.addEventListener('click', function() {
+                if(b.status){
+                    vis.removeCharacters(b.character);
+                    // vis.pictureArray.forEach(p =>{
+                    //     if(b.character == p.character){
+                    //         p.style.opacity = .5;
+                    //     }
+                    // })
+                    
+                    b.status = false;
+
+                }
+                else{
+                    vis.addCharacters(b.character);
+                    // vis.pictureArray.forEach(p =>{
+                    //     if(b.character == p.character){
+                    //         p.style.opacity = 1;
+                    //     }
+                    // })
+                    b.status = true;
+                }
+
+        //         vis.cloud = vis.svg
+        // .append("g")
+        // .attr("transform", "translate(" + vis.layout.size()[0] / 2 + "," + vis.layout.size()[1] / 2 + ")")
+        // .selectAll("text");
+                
+                vis.updateVis();
+            });
+                
+        })
         vis.updateVis();
     }
     updateVis(){
         let vis = this;
 
+        vis.words = vis.getAllWords();
+
+        vis.fontScale = d3.scaleLinear()
+        .domain([d3.max(vis.words, d=> d.size), d3.min(vis.words, d => d.size)])
+        .range([ 70, 10]);
+
         vis.layout = d3.layout.cloud().size([vis.width, vis.height])
-        .words(vis.words.map(function(d) {return {text: d.word, size:d.size};}))
+        .words(vis.words.map(function(d) {return {text: d.word, size:d.size, character: d.character};}))
         .padding(5).rotate(function() {return ~~(Math.random() * 2) * 90;})
         .fontSize(function(d) { return vis.fontScale(d.size);})
         .on("end", draw);
+
+         
 
         vis.layout.start();
 
         function draw(words) {
             console.log(words);
-            vis.svg
-              .append("g")
-                .attr("transform", "translate(" + vis.layout.size()[0] / 2 + "," + vis.layout.size()[1] / 2 + ")")
-                .selectAll("text")
-                  .data(words)
-                .enter().append("text")
+            vis.svg.join("g")
+            .attr("transform", "translate(" + vis.layout.size()[0] / 2 + "," + vis.layout.size()[1] / 2 + ")")
+            .selectAll("text")
+            .data(words)
+                  .join("text")
                   .style("font-size", function(d) { return d.size + "px"; })
-                  .style("fill", vis.colorScale(vis.character))
+                  .style("fill", function (d) {return vis.colorScale(d.character);})
                   .attr("text-anchor", "middle")
                   .attr("transform", function(d) {
                     return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
                   })
                   .text(function(d) { return d.text; });
           }
+
+          //this.characterCount();
+    }
+    addCharacters(character){
+        this.characters.push(character);
+        console.log("added", this.characters)
+    }
+    removeCharacters(character){
+        this.characters = this.characters.filter(function(d) {return !(character == d) });
+        console.log("removd", this.characters)
     }
 
-    getAllChartacterWords(){
+    getAllWords(){
+        let vis = this;
+        let wordArr = [];
+        vis.characters.forEach(d => {
+            //console.log(this.getAllChartacterWords(d));
+            let chars = this.getAllChartacterWords(d);
+            chars.forEach(s =>{
+                wordArr.push(s);
+            });
+
+        })
+        wordArr = wordArr.slice().sort((a,b) => d3.descending(a.size, b.size));
+        console.log(wordArr);
+        return wordArr;
+        
+        //vis.words = wordArr;
+    }
+    getSeasonData(s){
+        let vis = this;
+
+        let temp = new Array;
+
+        if(s == "all"){
+            vis.data =vis.allData;
+        }
+        else {
+            s.forEach(p =>{
+                temp = vis.allData.filter(function(d) {return d.season == p }) + temp;
+
+            })
+        }
+
+        vis.data = temp;
+
+        vis.updateVis();
+
+    }
+
+    getAllChartacterWords(chara){
         let vis = this;
         let characterWords = [];
 
@@ -106,7 +234,7 @@ class WordCloud{
 
         vis.data.forEach(d => {
 
-            if(d.character == vis.character){
+            if(d.character == chara){
                 //get rid of punctuation and transform [] into () bc regExs have weird rules with []
                 let quote = d.quote.replaceAll("!", "").replaceAll("[", "(").replaceAll("]", ")").replaceAll("?", "").replaceAll(".", "").replaceAll(",", "");
                 
@@ -126,7 +254,7 @@ class WordCloud{
 
       //Count frequency of words
         characterWords = d3.rollup(characterWords, v => v.length, d => d.toUpperCase());
-        let characterWordArray = Array.from(characterWords, function(d){return {word: d[0], size: d[1]};});
+        let characterWordArray = Array.from(characterWords, function(d){return {word: d[0], size: d[1], character: chara};});
 
         //remove stop words
         stopwords.forEach(s =>{
@@ -138,13 +266,23 @@ class WordCloud{
 
         let finalArray =new Array;
         let i = 0;
-        while(i < 50){
+        while(i < 50 / vis.characters.length){
             finalArray.push(characterWordsSorted[i]);
             i++;
 
         }
-        console.log(finalArray);
+        //console.log(finalArray);
         return finalArray;
+
+    }
+
+    characterCount(){
+        let vis = this;
+        let characterCount = d3.rollup(vis.data, v => v.length, d => d.character);
+        let characterArray = Array.from(characterCount, function(d){return {key: d[0], value: d[1]};});
+        let characterSorted = characterArray.slice().sort((a,b) => d3.descending(a.value, b.value));
+
+        //console.log(characterSorted);
 
     }
 }
