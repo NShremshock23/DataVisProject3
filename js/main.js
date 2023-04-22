@@ -2,7 +2,7 @@ let data
 let nonCharacters = ["monster", "woman", "man","audience", "crowd", "alltheanimals", "voice", "unknownvoice", "malevoice", "episodeends.", "episodeends", "all", "everyoneelse", "everyone", "both", ""]
 let mainCharacters = ["princessbubblegum", "marceline", "bmo", "iceking", "flameprincess", "lumpyspaceprincess"]
 
-d3.tsv('data/adventure_time_all_eps_with_scene_num_with_scene_num.tsv')
+d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
     .then(_data => {
         data = _data
 
@@ -45,7 +45,7 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num_with_scene_num.tsv')
         }
 
         // Turning frequent characters into a list, sorting, and getting top 50
-        data.frequentCharacters = Object.entries(data.frequentCharacters).sort((a,b) => b[1] - a[1]).slice(0, 100)
+        data.frequentCharacters = Object.entries(data.frequentCharacters).sort((a,b) => b[1] - a[1]).splice(0,100)
         
         data.links = []
         data.nodes = []
@@ -88,17 +88,15 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num_with_scene_num.tsv')
 
         // Go through links and calculate actual strength (occurrences together / total scenes of source + target)
         data.links.forEach(d => {
-            d.strength = d.strength / (data.characterFreq[d.source] + data.characterFreq[d.target])
+            d.strength = d.strength / (data.characterFreq[d.target] + data.characterFreq[d.source])
         })
 
-        console.log(data.characterFreq)
-        
         let wordCloud = new WordCloud(data);
 
         let forceDirectedGraph = new ForceDirectedGraph({
 			parentElement: '#force-directed-graph',
-			'containerHeight': 5000,
-			'containerWidth': 5000
+			'containerHeight': 2000,
+			'containerWidth': 2000
 		}, data)
 		forceDirectedGraph.updateVis()
     })
@@ -107,7 +105,6 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num_with_scene_num.tsv')
 
     //Take in character, get it's id form and return it's actual character
     function processCharacters(character) {
-        //console.log(getId(character))
         switch(getId(character)){
             case "pen":
             case "futurefinn":

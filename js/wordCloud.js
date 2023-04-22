@@ -48,7 +48,7 @@ class WordCloud{
         });
 
         this.pictureArray = Array.from(picArr, function(d){return {picture: d[0], character: d[1]};});
-        console.log(this.pictureArray);
+        // console.log(this.pictureArray);
 
 
         let buttons = [this.finnButton, this.jakeButton, this.bubblegumButton, this.marcilineButton, this.BMOButton, this.LSPButton, this.iceButton, this.flamePrincessButton, this.rainicornButton, this.treeTrunkButton];
@@ -62,7 +62,7 @@ class WordCloud{
         });
 
         this.buttonArray = Array.from(buttonArr, function(d){return {button: d[0], character: d[1], status: true};});
-        console.log(this.buttonArray);
+        // console.log(this.buttonArray);
 
 
 
@@ -157,7 +157,7 @@ class WordCloud{
         vis.layout.start();
 
         function draw(words) {
-            console.log(words);
+            // console.log(words);
             vis.svg.join("g")
             .attr("transform", "translate(" + vis.layout.size()[0] / 2 + "," + vis.layout.size()[1] / 2 + ")")
             .selectAll("text")
@@ -176,11 +176,11 @@ class WordCloud{
     }
     addCharacters(character){
         this.characters.push(character);
-        console.log("added", this.characters)
+        // console.log("added", this.characters)
     }
     removeCharacters(character){
         this.characters = this.characters.filter(function(d) {return !(character == d) });
-        console.log("removd", this.characters)
+        // console.log("removed", this.characters)
     }
 
     getAllWords(){
@@ -195,7 +195,7 @@ class WordCloud{
 
         })
         wordArr = wordArr.slice().sort((a,b) => d3.descending(a.size, b.size));
-        console.log(wordArr);
+        // console.log(wordArr);
         return wordArr;
         
         //vis.words = wordArr;
