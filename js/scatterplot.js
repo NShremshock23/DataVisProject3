@@ -17,6 +17,11 @@ class Scatterplot {
 
         vis.getId = (d) => d.toLowerCase().replace(/\s+/g, '').replace('\'', '').replace('\"', '')
 
+        // Select input elements
+        vis.xScaleCheckbox = d3.select('#scatter-x-scale')//.on('input', vis.updateVis())
+        vis.yScaleCheckbox = d3.select('#scatter-y-scale')//.on('input', vis.updateVis())
+        vis.radScaleCheckbox = d3.select('#scatter-radius-scale')//.on('input', vis.updateVis())
+
         // Set up chart area
         vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
         vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
@@ -32,17 +37,25 @@ class Scatterplot {
         vis.linePath = vis.chart.append('path')
             .attr('class', 'chart-line');
         
-        // Initialize linear scales
+        // Initialize scales
         // Domain for each scale is set in updateVis() to match possibly filtered data
-        vis.yScale = d3.scaleLinear()
-            .range([vis.height, 0]);
-    
-        vis.xScale = d3.scaleLinear()
+        vis.xScaleLinear = d3.scaleLinear()
             .range([0, vis.width]);
+        vis.yScaleLinear = d3.scaleLinear()
+            .range([vis.height, 0]);
+        vis.radScaleLinear = d3.scaleLinear()
+            .range([2, 20]);
+        
+        vis.xScaleLog = d3.scaleLog()
+            .range([0, vis.width]);
+        vis.yScaleLog = d3.scaleLog()
+            .range([vis.height, 0]);
+        vis.radScaleLog = d3.scaleLog()
+            .range([0, 10]);
     
         // Initialize axes
-        vis.xAxis = d3.axisBottom(vis.xScale);
-        vis.yAxis = d3.axisLeft(vis.yScale);
+        vis.xAxis = d3.axisBottom(vis.xScaleLinear);
+        vis.yAxis = d3.axisLeft(vis.yScaleLinear);
     
         // Draw axes (at first without accurate scale domains, fixed by renderVis)
         vis.xAxisGroup = vis.chart.append('g')
@@ -74,11 +87,9 @@ class Scatterplot {
             .attr('y', vis.height + vis.config.margin.top + 40)
             .attr('text-anchor', 'middle')
             .text('# Episodes Appeared In');
-    }
 
-    updateVis() {
-        let vis = this;
-
+        // DATA PROCESSING
+        // TODO: move to main.js, unify with Colin's data
         vis.characters = []
 
         vis.data.forEach(d => {
@@ -118,12 +129,45 @@ class Scatterplot {
 
         // console.log(vis.characters)
 
+        vis.xScaleCheckbox.on('click', () => {vis.updateVis()})
+        vis.yScaleCheckbox.on('click', () => {vis.updateVis()})
+        vis.radScaleCheckbox.on('click', () => {vis.updateVis()})
+            
+    }
+
+    updateVis() {
+        let vis = this;
+
         vis.xValue = d => d.episodes;
         vis.yValue = d => d.lines;
+        vis.radValue = d => d.words;
 
-        // Domains are scaled to give some space between extreme values and chart borders/axes
-        vis.xScale.domain(d3.extent(vis.characters, d => vis.xValue(d)));
-        vis.yScale.domain(d3.extent(vis.characters, d => vis.yValue(d)));
+        if (vis.xScaleCheckbox.property('checked')) {
+            vis.xAxis.scale(vis.xScaleLog)
+            vis.xScaleLog.domain([1, d3.max(vis.characters, d => vis.xValue(d))])
+        }
+        else {
+            vis.xAxis.scale(vis.xScaleLinear)
+            vis.xScaleLinear.domain([0, d3.max(vis.characters, d => vis.xValue(d))])
+        }
+        
+        if (vis.yScaleCheckbox.property('checked')) {
+            vis.yAxis.scale(vis.yScaleLog)
+            vis.yScaleLog.domain([1, d3.max(vis.characters, d => vis.yValue(d))])
+        }
+        else {
+            vis.yAxis.scale(vis.yScaleLinear)
+            vis.yScaleLinear.domain([0, d3.max(vis.characters, d => vis.yValue(d))])
+        }
+
+        if (vis.radScaleCheckbox.property('checked')) {
+            vis.radScaleLog.domain([1, d3.max(vis.characters, d => vis.radValue(d))])
+            vis.radScale = vis.radScaleLog
+        }
+        else {
+            vis.radScaleLinear.domain([0, d3.max(vis.characters, d => vis.radValue(d))])
+            vis.radScale = vis.radScaleLinear
+        }
 
         vis.renderVis();
     }
@@ -131,16 +175,14 @@ class Scatterplot {
     renderVis() {
         let vis = this;
 
+        let xScale = vis.xAxis.scale()
+        let yScale = vis.yAxis.scale()
+
         // Add circles
         vis.circles = vis.chart.selectAll('.point')
             .data(vis.characters)
             .join('circle')
                 .attr('class', 'point')
-                .attr('r', d => {
-                    return  30 * d.words / d3.max(vis.characters, j => j.words)
-                })
-                .attr('cy', d => vis.yScale(vis.yValue(d)))
-                .attr('cx', d => vis.xScale(vis.xValue(d)))
                 .attr('fill', 'steelblue')
                 .on('mouseover', (event,d) => {
                     d3.select('#tooltip')
@@ -158,10 +200,14 @@ class Scatterplot {
                 .on('mouseleave', () => {
                     d3.select('#tooltip').style('display', 'none');
                 })
+                .transition().duration(1600)
+                .attr('cx', d => xScale(vis.xValue(d)))
+                .attr('cy', d => yScale(vis.yValue(d)))
+                .attr('r', d => vis.radScale(vis.radValue(d)))
 
         // Update axes
-        vis.xAxisGroup.call(vis.xAxis);
-        vis.yAxisGroup.call(vis.yAxis);
+        vis.xAxisGroup.transition().duration(1600).call(vis.xAxis);
+        vis.yAxisGroup.transition().duration(1600).call(vis.yAxis);
     }
 
     countAllQuoteWords(d){
