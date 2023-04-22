@@ -22,25 +22,25 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
                 .map(d => processCharacters(d.replace(/\[.*?\]/, '').replace(/\(.*?\)/, '').replace('"', '')))]))]
 
         data.characters = data.scenes.map(i => i[1]).flat() // List of all characters (not unique)
-        let characterFreq = [] //list of all characters and their counts
-        let frequentCharacters = {} // list of frequent characters (in more than one scene)
+        data.characterFreq = [] //list of all characters and their counts
+        data.frequentCharacters = {} // list of frequent characters (in more than one scene)
 
         // loop through all characters and calculates their scene count
         for(character of data.characters){
-            if(characterFreq[(getId(character))])
-                characterFreq[getId(character)]++
+            if(data.characterFreq[(getId(character))])
+                data.characterFreq[getId(character)]++
             else
-                characterFreq[getId(character)] = 1
+            data.characterFreq[getId(character)] = 1
         }
         
         // Remove characters in just one scene
-        for (let character in characterFreq){
-            if(characterFreq[getId(character)] > 1)
-                frequentCharacters[getId(character)] = characterFreq[getId(character)]
+        for (let character in data.characterFreq){
+            if(data.characterFreq[getId(character)] > 1)
+                data.frequentCharacters[getId(character)] = data.characterFreq[getId(character)]
         }
 
         // Turning frequent characters into a list, sorting, and getting top 50
-        frequentCharacters = Object.entries(frequentCharacters).sort((a,b) => b[1] - a[1]).splice(0,50)
+        data.frequentCharacters = Object.entries(data.frequentCharacters).sort((a,b) => b[1] - a[1]).splice(0,100)
         
         data.links = []
         data.nodes = []
@@ -48,17 +48,17 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
         // Create links and nodes
         data.scenes.forEach(d => {
             // Loop through the frequent characters from the current scene to be a link target
-            for (let target of d[1].filter(c => frequentCharacters.some(f => getId(f[0]) == getId(c)))){
+            for (let target of d[1].filter(c => data.frequentCharacters.some(f => getId(f[0]) == getId(c)))){
 
                 let targetId = getId(target) // Get id form of target
 
                 // If that character doesn't have a node yet, make one
                 if(!data.nodes.some(n => getId(n.label) == targetId)) {
-                    data.nodes.push({id: targetId, label: target})
+                    data.nodes.push({id: targetId, label: target, sceneCount: data.characterFreq[targetId]})
                 }
 
                 // Loop through the frequent characters from the current scene again (not including the target character) to be a link source
-                for(let source of d[1].filter(c => getId(c) != targetId && frequentCharacters.some(f => getId(f[0]) == getId(c)))) {
+                for(let source of d[1].filter(c => getId(c) != targetId && data.frequentCharacters.some(f => getId(f[0]) == getId(c)))) {
 
                     let sourceId = getId(source) // get id form of source
 
@@ -79,13 +79,15 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
 
         // Go through links and calculate actual strength (occurrences together / total scenes of source + target)
         data.links.forEach(d => {
-            d.strength = d.strength / (characterFreq[d.source] + characterFreq[d.target])
+            d.strength = d.strength / (data.characterFreq[d.source] + data.characterFreq[d.target])
         })
+
+        console.log(data.characterFreq)
 
         let forceDirectedGraph = new ForceDirectedGraph({
 			parentElement: '#force-directed-graph',
-			'containerHeight': 2000,
-			'containerWidth': 2000
+			'containerHeight': 5000,
+			'containerWidth': 5000
 		}, data)
 		forceDirectedGraph.updateVis()
     })

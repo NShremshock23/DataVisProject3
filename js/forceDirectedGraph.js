@@ -19,6 +19,10 @@ class ForceDirectedGraph {
         vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right
         vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom
 
+        vis.radiusScale = d3.scaleSqrt()
+            .domain(d3.extent(Object.values(vis.data.characterFreq), f => f))
+            .range([1, 40])
+
         vis.chart = d3.select(vis.config.parentElement)
             .attr('width', vis.config.containerWidth )
             .attr('height', vis.config.containerHeight)
@@ -35,9 +39,10 @@ class ForceDirectedGraph {
         // Force link: Sets link force based on strength
         // On Tick: updates element position each tick (gives the fun animation)
         vis.simulation = d3.forceSimulation(vis.data.nodes)
-            .force('charge', d3.forceManyBody().strength(-800))
+            .force('charge', d3.forceManyBody().strength(-400))
+            .force('collide', d3.forceCollide().strength(n => d3.radiusScale(n.sceneCount) + 1))
             .force('center', d3.forceCenter(vis.width / 2, vis.height / 2))
-            .force('link', d3.forceLink().id(l => l.id).strength(l => l.strength))
+            .force('link', d3.forceLink().id(l => l.id).strength(l => l.strength * 2))
             .on('tick', ticked);
 
         // Applies links to the link force
@@ -78,7 +83,8 @@ class ForceDirectedGraph {
             .selectAll('circle')
             .data(vis.data.nodes)
             .join('circle')
-              .attr('r', 5)
+              .attr('r', d => vis.radiusScale(d.sceneCount))
+              .attr('opacity', 0.5)
               .attr('class', 'node')
 
         // Creates SVG for text labels
@@ -88,8 +94,9 @@ class ForceDirectedGraph {
             .join('text')
             .text(n => n.label)
                 .attr('font-size', 15)
-                .attr('dx', 15)
-                .attr('dy', 4)
+                .attr('text-anchor', "middle")
+                .attr('dx', d => 0)
+                .attr('dy', d => -4 - vis.radiusScale(d.sceneCount))
     }
 
     renderVis(){
