@@ -83,13 +83,12 @@ class Scatterplot {
 
         vis.data.forEach(d => {
             if (d.character != '') {
-                // console.log(d.character)
-                // console.log(vis.getId(d.character))
 
                 let character = vis.characters.find((o, i) => { 
                     if (o.id == vis.getId(d.character)) {
-                        // Count line
-                        o.lines++
+                        // Count line, words
+                        o.lines += 1
+                        o.words += +vis.countAllQuoteWords(d)
                         
                         // Count the ep if it hasn't already been counted for current character (ASSUMES CHRONOLOGICAL DATA ORDER)
                         if (o.lastSeason < d.season || (o.lastSeason == d.season && o.lastEp < +d.ep_num)) {
@@ -97,6 +96,7 @@ class Scatterplot {
                             o.lastSeason = +d.season
                             o.lastEp = +d.ep_num
                         }
+
                         return true
                     }
                 })
@@ -108,7 +108,7 @@ class Scatterplot {
                         'name': d.character,
                         'episodes': 1,
                         'lines': 1,
-                        'words': 0,     // TODO
+                        'words': vis.countAllQuoteWords(d),     // TODO
                         'lastSeason': +d.season,
                         'lastEp': +d.ep_num
                     })
@@ -116,7 +116,7 @@ class Scatterplot {
             }
         })
 
-        console.log(vis.characters)
+        // console.log(vis.characters)
 
         vis.xValue = d => d.episodes;
         vis.yValue = d => d.lines;
@@ -136,7 +136,9 @@ class Scatterplot {
             .data(vis.characters)
             .join('circle')
                 .attr('class', 'point')
-                .attr('r', 4)
+                .attr('r', d => {
+                    return  30 * d.words / d3.max(vis.characters, j => j.words)
+                })
                 .attr('cy', d => vis.yScale(vis.yValue(d)))
                 .attr('cx', d => vis.xScale(vis.xValue(d)))
                 .attr('fill', 'steelblue')
@@ -150,6 +152,7 @@ class Scatterplot {
                             <div class="tooltip-title">${d.name}</div>
                             <div>Episode Appearances: ${d.episodes}</div>
                             <div>Lines of Dialog: ${d.lines}</div>
+                            <div>Total Words Spoken: ${d.words}</div>
                         `);
                 })
                 .on('mouseleave', () => {
@@ -159,5 +162,30 @@ class Scatterplot {
         // Update axes
         vis.xAxisGroup.call(vis.xAxis);
         vis.yAxisGroup.call(vis.yAxis);
+    }
+
+    countAllQuoteWords(d){
+        let vis = this
+        
+        // Get rid of punctuation and transform [] into () bc regExs have weird rules with []
+        let quoteWords = d.quote.replaceAll("!", "").replaceAll("[", "(").replaceAll("]", ")").replaceAll("?", "").replaceAll(".", "").replaceAll(",", "");
+        
+        // Catches anything within () 
+        let regEx = / *\([^)]*\) */g;
+
+        // Gets rid of all the unspoken text
+        quoteWords = quoteWords.replaceAll(regEx, "");
+
+        // Splits the string by word
+        quoteWords = quoteWords.split(" ");
+
+        // if (vis.getId(d.character) == 'jake') {
+        //     console.log(d.quote)
+        //     console.log(quoteWords)
+        //     console.log(quoteWords.length)
+        // } 
+
+        // Return the number of words
+        return quoteWords.length 
     }
 }
