@@ -7,12 +7,42 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
         data = _data
 
         data.characterData = [] // Array of objects containing character-specific stats (lines/words spoken, # episodes, etc.)
+        data.episodeData = []   // Array of objects for episode-specific stats
 
+        // Episode, Character Data Processing
         data.forEach(d => {
             d.seasonEpisodeScene = d.season + "-" + d.ep_num + "-" + d.scene_num
             d.season = +d.season;
             d.ep_num  = +d.ep_num;
             d.scene_num = +d.scene_num;
+
+            let ep = data.episodeData.find((o, i) => { 
+                if (o.id == (d.season + "-" + d.ep_num)) {
+                    // Count line, words
+                    o.linesTotal += 1
+                    o.wordsTotal += countAllQuoteWords(d)
+                    
+                    // Count scenes within same ep
+                    if (o.lastScene < d.scene_num) {
+                        o.lastScene = d.scene_num
+                    }
+
+                    return true
+                }
+            })
+
+            // Add a record for the current episode if it doesn't already have one
+            if (!ep) {
+                ep = {
+                    'id': (d.season + "-" + d.ep_num),
+                    'linesTotal': 1,
+                    'wordsTotal': countAllQuoteWords(d),
+                    'linesPerChar': {},
+                    'wordsPerChar': {},
+                    'lastScene': d.scene_num
+                }
+                data.episodeData.push(ep)
+            }
 
             if (d.character != '' &&
                 !(nonCharacters.includes(getId(d.character)) || // filters out "all" and similar characters
@@ -23,7 +53,7 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
 
                 // Find character if they already exist in characterData[]
                 let character = data.characterData.find((o, i) => { 
-                    if (o.id == getId(d.character)) {
+                    if (o.id == getId(processCharacters(d.character))) {
                         // Count line, words
                         o.lines += 1
                         o.words += countAllQuoteWords(d)
@@ -48,7 +78,7 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
 
                 // Add a record for the current character if they don't already have one
                 if (!character) {
-                    data.characterData.push({
+                    character = {
                         'id': getId(processCharacters(d.character)),
                         'name': processCharacters(d.character),
                         'episodes': 1,
@@ -58,7 +88,18 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
                         'lastSeason': d.season,
                         'lastEp': d.ep_num,
                         'lastScene': d.scene_num
-                    })
+                    }
+                    data.characterData.push(character);
+                }
+
+                // Add character data to appropriate episodeData object
+                if (ep.linesPerChar[character.id]) {
+                    ep.linesPerChar[character.id] += 1
+                    ep.wordsPerChar[character.id] += countAllQuoteWords(d)
+                }
+                else {
+                    ep.linesPerChar[character.id] = 1
+                    ep.wordsPerChar[character.id] = countAllQuoteWords(d)
                 }
             }
         });
