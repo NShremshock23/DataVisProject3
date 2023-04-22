@@ -2,12 +2,15 @@ let data
 let nonCharacters = ["monster", "woman", "man","audience", "crowd", "alltheanimals", "voice", "unknownvoice", "malevoice", "episodeends.", "episodeends", "all", "everyoneelse", "everyone", "both", ""]
 let mainCharacters = ["princessbubblegum", "marceline", "bmo", "iceking", "flameprincess", "lumpyspaceprincess"]
 
-d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
+d3.tsv('data/adventure_time_all_eps_with_scene_num_with_scene_num.tsv')
     .then(_data => {
         data = _data
 
         data.forEach(d => {
             d.seasonEpisodeScene = d.season + "-" + d.ep_num + "-" + d.scene_num
+            d.season = +d.season;
+            d.ep_num  = +d.ep_num;
+            d.scene_num = +d.scene_num;
         });
 
         // Get list of scenes in format {season-episode-scene, characters in scene}
@@ -89,6 +92,8 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
         })
 
         console.log(data.characterFreq)
+        
+        let wordCloud = new WordCloud(data);
 
         let forceDirectedGraph = new ForceDirectedGraph({
 			parentElement: '#force-directed-graph',
