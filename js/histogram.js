@@ -89,9 +89,10 @@ class Histogram {
 
         let lineKeysMain = vis.mainCharacters
         for (let i = 0; i < lineKeysMain.length; i++) {
-            lineKeysMain[i] = 'lines_' + getId(lineKeysMain[i])
+            lineKeysMain[i] = 'lines_' + getId(processCharacters(lineKeysMain[i]))
         }
         lineKeysMain.push('lines_other')
+
 
         // Stack order reversed to place Other at the bottom
         vis.stack = d3.stack().keys(lineKeysMain).order(d3.stackOrderReverse)
@@ -103,6 +104,10 @@ class Histogram {
             d.lines_other = 0
             d.otherChars = 0
 
+            for (let key of lineKeysMain) {
+                if(!d[key]) d[key] = 0
+            }
+
             for (let key of lineKeys) {
                 // If the current key isn't for one of the main characters
                 if (!lineKeysMain.some(keyMain => key == keyMain)) {
@@ -113,12 +118,13 @@ class Histogram {
         })
 
         vis.stackedData = vis.stack(vis.epData)
+        console.log(vis.stackedData)
 
         vis.xValue = d => d.id;
         vis.yValue = d => d.linesTotal;
 
         vis.xScale.domain(vis.epData.map(m => vis.xValue(m)))
-        vis.yScale.domain(d3.extent(vis.epData, d => vis.yValue(d)))
+        vis.yScale.domain([0, d3.max(vis.epData, d => vis.yValue(d))])
 
         vis.renderVis();
     }
@@ -132,15 +138,31 @@ class Histogram {
             .join('g')
                 .attr('class', d => `epBar char-${d.key.replace('lines_', '')}`)
                 .selectAll('rect')
-                    .data(d => d)
+                    .data(g => g)
                     .join('rect')
+                        .on('mouseover', (event,x) => {
+                            d3.select('#tooltip')
+                                .style('display', 'block')
+                                .style('left', (event.pageX + 10) + 'px')   
+                                .style('top', (event.pageY + 10) + 'px')
+                                .style('text-align', 'left')
+                                .html(`
+                                    <div class="tooltip-title">${x.data.id}</div>
+                                    <div>Character: TODO</div>
+                                    <div>Lines of Dialog: ${x[1] - x[0]}</div>
+                                    <div>Total Words Spoken: TODO</div>
+                                `);
+                        })
+                        .on('mouseleave', () => {
+                            d3.select('#tooltip').style('display', 'none');
+                        })    
                         .attr('x', d => vis.xScale(d.data.id) + 1)
                         .attr('y', d => vis.yScale(d[1]))
                         .attr('height', d => vis.yScale(d[0]) - vis.yScale(d[1]))
                         .attr('width', vis.xScale.bandwidth() - 2);
 
         // Update axes
-        vis.xAxisGroup.transition().duration(1600).call(vis.xAxis);
-        vis.yAxisGroup.transition().duration(1600).call(vis.yAxis);
+        vis.xAxisGroup.call(vis.xAxis);
+        vis.yAxisGroup.call(vis.yAxis);
     }
 }
