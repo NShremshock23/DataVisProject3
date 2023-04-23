@@ -149,17 +149,17 @@ class WordCloud{
                 if(s.status){
                     s.status = false;
                     vis.removeSeasons(vis.seasonArray);
-                    b.button.style.backgroundColor = '#F9F6F0';
+                    s.button.style.backgroundColor = '#F9F6F0';
 
                 }
                 else{
                     s.status = true;
                     vis.addSeasons(vis.seasonArray);
-                    b.button.style.backgroundColor = 'rgba(204, 246, 204, 0.877)';
+                    s.button.style.backgroundColor = 'rgba(204, 246, 204, 0.877)';
 
                     if(s.season == "all"){
                         s.status = false;
-                        b.button.style.backgroundColor = '#F9F6F0';
+                        s.button.style.backgroundColor = '#F9F6F0';
                     }
                 }
                 
