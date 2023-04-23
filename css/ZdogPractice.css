@@ -14,7 +14,7 @@ treeTrunkColor = '#B52C33'; */
   }
 
  body{
-  background: #F9F6F0;
+  background-image: url(pictures\442432.jpg);
  } 
 
  .charBtn{
@@ -25,6 +25,47 @@ treeTrunkColor = '#B52C33'; */
  img {
   padding: 5px;
  }
+ .seasonBtn{
+  background: rgba(204, 246, 204, 0.877);
+  border: none;
+
+ }
+
+
+        #Finn {
+          background: #1897CA;
+        }
+        #Jake{
+          background: #FF971A;
+        }
+        #IceKing{
+          background: #344980;
+        }
+        #BMO {
+          background: #59877C;
+        }
+        #Marciline{
+          background: #851F1D;
+
+        }
+      #TreeTrunk{
+        background: #B52C33;
+
+      }
+      #LSP{
+        background: #CC93FA;
+
+      }
+      #flamePrincess{
+        background: #FF4006;
+
+      }
+      #bubblegum{
+        background: #FF61D0;
+
+      }
+
+
 
 #Finn :hover{
   background: #4fbde8;
