@@ -49,8 +49,10 @@ class Scatterplot {
             .range([0, 10]);
     
         // Initialize axes
-        vis.xAxis = d3.axisBottom(vis.xScaleLinear).tickSizeOuter(0);
-        vis.yAxis = d3.axisLeft(vis.yScaleLinear).tickSizeOuter(0);
+        vis.xAxis = d3.axisBottom(vis.xScaleLinear)
+            .tickSizeOuter(0)
+        vis.yAxis = d3.axisLeft(vis.yScaleLinear)
+            .tickSizeOuter(0);
     
         // Draw axes (at first without accurate scale domains, fixed by renderVis)
         vis.xAxisGroup = vis.chart.append('g')

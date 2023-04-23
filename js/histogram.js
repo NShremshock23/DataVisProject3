@@ -15,7 +15,10 @@ class Histogram {
     initVis() {
         let vis = this;
 
+        vis.getId = (d) => d.toLowerCase().replace(/\s+/g, '').replace('\'', '').replace('\"', '')
         vis.getEpId = (d) => d.season + "-" + d.ep_num
+
+        vis.mainCharacters = ["Finn", "BMO", "Princess Bubblegum","Flame Princess", "Jake", "LSP", "Ice King", "Marceline", "Lady Rainicorn", "Tree Trunks"];
 
         // Set up chart area
         vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
@@ -33,9 +36,16 @@ class Histogram {
             .range([0, vis.width]);
         vis.yScale = d3.scaleLinear()
             .range([vis.height, 0]);
+
+        vis.colorScale = d3.scaleOrdinal()
+        .domain(["Finn", "Jake", "Princess Bubblegum", "Ice King", "BMO", "Lady Rainicorn", "Tree Trunks", "LSP", "Marceline", "Flame Princess"])
+        .range([vis.finnColor, vis.jakeColor, vis.bubblegumColor, vis.iceColor, vis.BMOColor, vis.rainacornColor, vis.treeTrunkColor, vis.lumpyColor, vis.vampireColor, vis.flameColor]);
     
         // Initialize axes
-        vis.xAxis = d3.axisBottom(vis.xScale).tickSizeOuter(0);
+        vis.xAxis = d3.axisBottom(vis.xScale)
+            .tickSizeOuter(0)
+            // .tickFormat(x => /[0-9]-1/.test(x) ? x : "")
+            .tickValues(['1-1', '2-1', '3-1', '4-1', '5-1', '6-1', '7-1', '8-1', '10-1']);
         vis.yAxis = d3.axisLeft(vis.yScale).tickSizeOuter(0);
     
         // Draw axes (at first without accurate scale domains, fixed by renderVis)
@@ -75,16 +85,45 @@ class Histogram {
         let vis = this;
 
         // TODO: Data processing
+        vis.stackedData = []
 
-        vis.data.episodeData.forEach(d => {
-            
+        let lineKeysMain = vis.mainCharacters
+        for (let i = 0; i < lineKeysMain.length; i++) {
+            lineKeysMain[i] = 'lines_' + getId(lineKeysMain[i])
+        }
+        lineKeysMain.push('lines_other')
+        console.log(lineKeysMain)
+
+        // Stack order reversed to place Other at the bottom
+        vis.stack = d3.stack().keys(lineKeysMain).order(d3.stackOrderReverse)
+        vis.epData = vis.data.episodeData
+
+        vis.epData.forEach(d => {
+            let lineKeys = Object.getOwnPropertyNames(d).filter(d => {return d.includes('lines_')})
+            console.log(lineKeys)
+
+            d.lines_other = 0
+            d.otherChars = 0
+
+            for (let key of lineKeys) {
+                // If the current key isn't for one of the main characters
+                if (!lineKeysMain.some(keyMain => key == keyMain)) {
+                    console.log(d[key])
+                    d.lines_other += d[key]
+                    d.otherChars++
+                }
+            }
+            console.log(d.lines_other)
         })
 
-        // vis.xValue = d => d.episodes;
-        // vis.yValue = d => d.lines;
+        vis.stackedData = vis.stack(vis.epData)
+        console.log(vis.stackedData)
 
-        // vis.xScale.domain(extent[...])
-        // vis.yScale.domain(extent[...])
+        vis.xValue = d => d.id;
+        vis.yValue = d => d.linesTotal;
+
+        vis.xScale.domain(vis.epData.map(m => vis.xValue(m)))
+        vis.yScale.domain(d3.extent(vis.epData, d => vis.yValue(d)))
 
         vis.renderVis();
     }
@@ -93,54 +132,20 @@ class Histogram {
         let vis = this;
 
         // TODO Add rectangles
-        vis.circles = vis.chart.selectAll('.point')
-            .data(vis.data.characterData)
-            .join('circle')
-                .attr('class', 'point')
-                .attr('fill', 'steelblue')
-                .on('mouseover', (event,d) => {
-                    d3.select('#tooltip')
-                        .style('display', 'block')
-                        .style('left', (event.pageX + 10) + 'px')   
-                        .style('top', (event.pageY + 10) + 'px')
-                        .style('text-align', 'left')
-                        .html(`
-                            <div class="tooltip-title">${d.name}</div>
-                            <div>Episode Appearances: ${d.episodes}</div>
-                            <div>Scene Appearances: ${d.scenes}</div>
-                            <div>Lines of Dialog: ${d.lines}</div>
-                            <div>Total Words Spoken: ${d.words}</div>
-                        `);
-                })
-                .on('mouseleave', () => {
-                    d3.select('#tooltip').style('display', 'none');
-                })
-                .transition().duration(1600)
-                .attr('cx', d => xScale(vis.xValue(d)))
-                .attr('cy', d => yScale(vis.yValue(d)))
-                .attr('r', d => vis.radScale(vis.radValue(d)))
+        vis.rectangles = vis.chart.selectAll('epBar')
+            .data(vis.stackedData)
+            .join('g')
+                .attr('class', d => `epBar char-${d.key.replace('lines_', '')}`)
+                .selectAll('rect')
+                    .data(d => d)
+                    .join('rect')
+                        .attr('x', d => vis.xScale(d.data.id) + 1)
+                        .attr('y', d => vis.yScale(d[1]))
+                        .attr('height', d => vis.yScale(d[0]) - vis.yScale(d[1]))
+                        .attr('width', vis.xScale.bandwidth() - 2);
 
         // Update axes
         vis.xAxisGroup.transition().duration(1600).call(vis.xAxis);
         vis.yAxisGroup.transition().duration(1600).call(vis.yAxis);
-    }
-
-    countAllQuoteWords(d){
-        let vis = this
-        
-        // Get rid of punctuation and transform [] into () bc regExs have weird rules with []
-        let quoteWords = d.quote.replaceAll("!", "").replaceAll("[", "(").replaceAll("]", ")").replaceAll("?", "").replaceAll(".", "").replaceAll(",", "");
-        
-        // Catches anything within () 
-        let regEx = / *\([^)]*\) */g;
-
-        // Gets rid of all the unspoken text
-        quoteWords = quoteWords.replaceAll(regEx, "");
-
-        // Splits the string by word
-        quoteWords = quoteWords.split(" ");
-
-        // Return the number of words
-        return quoteWords.length 
     }
 }

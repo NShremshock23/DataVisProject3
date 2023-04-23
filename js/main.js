@@ -23,8 +23,8 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
                     o.wordsTotal += countAllQuoteWords(d)
                     
                     // Count scenes within same ep
-                    if (o.lastScene < d.scene_num) {
-                        o.lastScene = d.scene_num
+                    if (o.scenes < d.scene_num) {
+                        o.scenes = d.scene_num
                     }
 
                     return true
@@ -37,9 +37,7 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
                     'id': (d.season + "-" + d.ep_num),
                     'linesTotal': 1,
                     'wordsTotal': countAllQuoteWords(d),
-                    'linesPerChar': {},
-                    'wordsPerChar': {},
-                    'lastScene': d.scene_num
+                    'scenes': d.scene_num
                 }
                 data.episodeData.push(ep)
             }
@@ -93,13 +91,13 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
                 }
 
                 // Add character data to appropriate episodeData object
-                if (ep.linesPerChar[character.id]) {
-                    ep.linesPerChar[character.id] += 1
-                    ep.wordsPerChar[character.id] += countAllQuoteWords(d)
+                if (ep['lines_' + character.id]) {
+                    ep['lines_' + character.id] += 1
+                    ep['words_' + character.id] += countAllQuoteWords(d)
                 }
                 else {
-                    ep.linesPerChar[character.id] = 1
-                    ep.wordsPerChar[character.id] = countAllQuoteWords(d)
+                    ep['lines_' + character.id] = 1
+                    ep['words_' + character.id] = countAllQuoteWords(d)
                 }
             }
         });
@@ -197,6 +195,13 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
 			'containerWidth': 800
 		}, data)
 		scatterplot.updateVis()
+
+        let histogram = new Histogram({
+			parentElement: '#histogram',
+			'containerHeight': 600,
+			'containerWidth': 1500
+		}, data)
+		histogram.updateVis()
     })
 
     let getId = (d) => d.toLowerCase().replace(/\s+/g, '')
