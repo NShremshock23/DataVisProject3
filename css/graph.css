@@ -1,0 +1,86 @@
+.label {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+.node:hover, .label:hover {
+    cursor:pointer;
+}
+
+#force-directed-graph {
+    zoom: 75%;
+}
+#graph-container {
+    display: grid;
+    place-items: center;
+    overflow: scroll;
+    height: 500px;
+    width: 1000px;
+}
+
+.graph-btn {
+    margin: 5px 10px;
+}
+
+#graph-btns {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+#tooltip {
+    position: absolute;
+    background: #f6eeee;
+    box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
+    border: 1px solid #dddddd;
+    min-width: 30px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px;
+    color: #333;
+}
+
+.char-finn {
+    fill: #1897CA;
+}
+
+.char-jake {
+    fill: #FF971A;
+}
+
+.char-princessbubblegum {
+    fill: #FF61D0;
+}
+
+.char-iceking {
+    fill: #344980;
+}
+
+.char-flameprincess {
+    fill: #FF4006;
+}
+
+.char-bmo {
+    fill: #59877C;
+}
+
+.char-lsp {
+    fill: #CC93FA;
+}
+
+.char-ladyrainicorn {
+    fill: #FFB1FD;
+}
+
+.char-treetrunks {
+    fill: #B52C33;
+}
+
+.char-marceline {
+    fill: #851F1D;
+}
+
+.char-other {
+    fill: #b4b4b4;
+}

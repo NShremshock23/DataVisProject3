@@ -1,0 +1,123 @@
+#tooltip {
+    position: absolute;
+    background: #f6eeee;
+    box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
+    border: 1px solid #dddddd;
+    min-width: 30px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px;
+    color: #333;
+}
+
+#tooltip {
+    position: absolute;
+    background: #f6eeee;
+    box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
+    border: 1px solid #dddddd;
+    min-width: 30px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px;
+    color: #333;
+}
+
+#picture{
+    background-image: url(background.png);
+  }
+
+  #wordcloudStuff{
+    display: flex;
+    flex-direction: row;
+  }
+  #visuals{
+    display: flex;
+    flex-direction: row;
+  }
+  
+
+ body{
+  background: #F9F6F0;
+ } 
+
+ .charBtn{
+  background: none;
+  border: none;
+  cursor: pointer;
+ }
+ img {
+  padding: 5px;
+ }
+ .seasonBtn{
+  background: rgba(204, 246, 204, 0.877);
+  border: none;
+  font-size: x-small;
+
+ }
+
+
+        #Finn {
+          background: #1897CA;
+        }
+        #Jake{
+          background: #FF971A;
+        }
+        #IceKing{
+          background: #344980;
+        }
+        #BMO {
+          background: #59877C;
+        }
+        #Marciline{
+          background: #851F1D;
+
+        }
+      #TreeTrunk{
+        background: #e3e00a;
+
+      }
+      #LSP{
+        background: #CC93FA;
+
+      }
+      #flamePrincess{
+        background: #d50303c6;
+
+      }
+      #bubblegum{
+        background: #FF61D0;
+
+      }
+
+
+
+#Finn :hover{
+  background: #4fbde8;
+}
+#Jake :hover{
+  background: #f5b260;
+}
+#bubblegum :hover{
+  background: #f336ba;
+}
+#flamePrincess :hover{
+  background: #FF4006;
+}
+#LSP :hover{
+  background: #d7adfa;
+}
+
+#Marciline :hover{
+  background: #843a39;
+}
+#IceKing :hover{
+  background: #465a8a;
+}
+#BMO :hover{
+  background: #98ead7;
+}
+#TreeTrunk :hover{
+  background: #e8e55deb;
+}
