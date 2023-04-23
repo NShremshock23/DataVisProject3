@@ -1,11 +1,95 @@
+/* this.finnColor = '#1897CA';
+        this.bubblegumColor = '#FF61D0';
+        this.jakeColor = '#FF971A';
+        this.iceColor = '#344980';
+        this.BMOColor = '#59877C';
+        this.vampireColor = '#851F1D';
+        this.flameColor = '#FF4006';
+        this.lumpyColor = '#CC93FA';
+        this.rainacornColor = '#FFB1FD';
+treeTrunkColor = '#B52C33'; */
+
 .finn {
     background: rgb(185, 28, 28);
   }
 
-  .jake {
-    background: rgb(185, 28, 28);
-  }
-
  body{
-  background: #F9F6F0;
+  background-image: url(pictures\442432.jpg);
  } 
+
+ .charBtn{
+  background: none;
+  border: none;
+ }
+ .seasonBtn{
+  background: rgba(204, 246, 204, 0.877);
+  border: none;
+
+ }
+
+
+        #Finn {
+          background: #1897CA;
+        }
+        #Jake{
+          background: #FF971A;
+        }
+        #IceKing{
+          background: #344980;
+        }
+        #BMO {
+          background: #59877C;
+        }
+        #Marciline{
+          background: #851F1D;
+
+        }
+      #TreeTrunk{
+        background: #B52C33;
+
+      }
+      #LSP{
+        background: #CC93FA;
+
+      }
+      #flamePrincess{
+        background: #FF4006;
+
+      }
+      #bubblegum{
+        background: #FF61D0;
+
+      }
+
+
+
+#Finn :hover{
+  background: #4fbde8;
+}
+#Jake :hover{
+  background: #f5b260;
+}
+#bubblegum :hover{
+  background: #f336ba;
+}
+#flamePrincess :hover{
+  background: #d50303c6;
+}
+#LSP :hover{
+  background: #d7adfa;
+}
+#Rainicorn :hover{
+  background: #fb7bf6;
+}
+#Marciline :hover{
+  background: #843a39;
+}
+#IceKing :hover{
+  background: #465a8a;
+}
+#BMO :hover{
+  background: #63857d;
+}
+#TreeTrunk :hover{
+  background: #e3e00a;
+}
