@@ -92,7 +92,6 @@ class Histogram {
             lineKeysMain[i] = 'lines_' + getId(lineKeysMain[i])
         }
         lineKeysMain.push('lines_other')
-        console.log(lineKeysMain)
 
         // Stack order reversed to place Other at the bottom
         vis.stack = d3.stack().keys(lineKeysMain).order(d3.stackOrderReverse)
@@ -100,7 +99,6 @@ class Histogram {
 
         vis.epData.forEach(d => {
             let lineKeys = Object.getOwnPropertyNames(d).filter(d => {return d.includes('lines_')})
-            console.log(lineKeys)
 
             d.lines_other = 0
             d.otherChars = 0
@@ -108,16 +106,13 @@ class Histogram {
             for (let key of lineKeys) {
                 // If the current key isn't for one of the main characters
                 if (!lineKeysMain.some(keyMain => key == keyMain)) {
-                    console.log(d[key])
                     d.lines_other += d[key]
                     d.otherChars++
                 }
             }
-            console.log(d.lines_other)
         })
 
         vis.stackedData = vis.stack(vis.epData)
-        console.log(vis.stackedData)
 
         vis.xValue = d => d.id;
         vis.yValue = d => d.linesTotal;
