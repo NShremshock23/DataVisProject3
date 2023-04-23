@@ -15,6 +15,19 @@ class WordCloud{
         this.allData = _data;
         this.data = _data;
 
+        this.allButton = document.getElementById('sznAll');
+        this.oneButton = document.getElementById('szn1');
+        this.twoButton = document.getElementById('szn2');
+        this.threeButton = document.getElementById('szn3');
+        this.fourButton = document.getElementById('szn4');
+        this.fiveButton = document.getElementById('szn5');
+        this.sixButton = document.getElementById('szn6');
+        this.sevenButton = document.getElementById('szn7');
+        this.eightButton = document.getElementById('szn8');
+        this.nineButton = document.getElementById('szn9');
+        this.tenButton = document.getElementById('szn10');
+        this.elevenButton = document.getElementById('szn11');
+
         this.finnButton = document.getElementById('Finn');
         this.jakeButton = document.getElementById('Jake');
         this.bubblegumButton = document.getElementById('bubblegum');
@@ -48,12 +61,11 @@ class WordCloud{
         });
 
         this.pictureArray = Array.from(picArr, function(d){return {picture: d[0], character: d[1]};});
-        // console.log(this.pictureArray);
+        console.log(this.pictureArray);
 
 
         let buttons = [this.finnButton, this.jakeButton, this.bubblegumButton, this.marcilineButton, this.BMOButton, this.LSPButton, this.iceButton, this.flamePrincessButton, this.rainicornButton, this.treeTrunkButton];
 
-       // let chars = ["Finn", "Jake","Princess Bubblegum", "Marcline", "BMO", "LSP","Ice King", "Flame Princess", "Rainicorn", "Tree Trunks"];
         let buttonArr = new Map;
         let i = 0;
         buttons.forEach(b =>{
@@ -62,15 +74,27 @@ class WordCloud{
         });
 
         this.buttonArray = Array.from(buttonArr, function(d){return {button: d[0], character: d[1], status: true};});
-        // console.log(this.buttonArray);
+        console.log(this.buttonArray);
 
 
 
         this.characters = ["Finn", "BMO", "Princess Bubblegum","Flame Princess", "Jake", "LSP", "Ice King", "Marceline", "Lady Rainicorn", "Tree Trunks"];
         this.character = "Finn";
 
-        this.seasons = [];
-        this.season = "all";
+        let seasonButton = [this.allButton, this.oneButton,this.twoButton, this.threeButton, this.fourButton, this.fiveButton, this.sixButton, this.sevenButton, this.eightButton, this.nineButton, this.tenButton, this.elevenButton];
+        let sn = ["all", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        let seasonArr = new Map;
+        let k = 0;
+        seasonButton.forEach(b =>{
+            seasonArr.set(b,sn[k]);
+            k++; 
+        });
+
+        this.seasonArray = Array.from(seasonArr, function(d){return {button: d[0], season: d[1], status: true};});
+        console.log(this.seasonArray);
+        
+        
+       // this.seasons = this.addSeasons(this.seasonArray);
 
         this.words = this.getAllWords();
         this.allWords = this.words;
@@ -93,12 +117,6 @@ class WordCloud{
         .attr("height", vis.height + vis.margin.left + vis.margin.right)
         .append("g").attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
 
-
-        //console.log(vis.words)
-        // vis.fontScale = d3.scaleLinear()
-        // .domain([d3.max(vis.words, d=> d.size), d3.min(vis.words, d => d.size)])
-        // .range([ 70, 10]);
-
         vis.colorScale = d3.scaleOrdinal()
         .domain(["Finn", "Jake", "Princess Bubblegum", "Ice King", "BMO", "Lady Rainicorn", "Tree Trunks", "LSP", "Marceline", "Flame Princess"])
         .range([vis.finnColor, vis.jakeColor, vis.bubblegumColor, vis.iceColor, vis.BMOColor, vis.rainacornColor, vis.treeTrunkColor, vis.lumpyColor, vis.vampireColor, vis.flameColor]);
@@ -107,36 +125,47 @@ class WordCloud{
             b.button.addEventListener('click', function() {
                 if(b.status){
                     vis.removeCharacters(b.character);
-                    // vis.pictureArray.forEach(p =>{
-                    //     if(b.character == p.character){
-                    //         p.style.opacity = .5;
-                    //     }
-                    // })
                     
                     b.status = false;
 
                 }
                 else{
                     vis.addCharacters(b.character);
-                    // vis.pictureArray.forEach(p =>{
-                    //     if(b.character == p.character){
-                    //         p.style.opacity = 1;
-                    //     }
-                    // })
+
                     b.status = true;
                 }
-
-        //         vis.cloud = vis.svg
-        // .append("g")
-        // .attr("transform", "translate(" + vis.layout.size()[0] / 2 + "," + vis.layout.size()[1] / 2 + ")")
-        // .selectAll("text");
                 
                 vis.updateVis();
             });
                 
-        })
+        });
+
+
+        vis.seasonArray.forEach(s =>{
+            s.button.addEventListener('click', function() {
+                if(s.status){
+                    s.status = false;
+                    vis.removeSeasons(vis.seasonArray);
+
+                }
+                else{
+                    s.status = true;
+                    vis.addSeasons(vis.seasonArray);
+
+                    if(s.season == "all"){
+                        s.status = false;
+                    }
+                }
+                
+                vis.updateVis();
+            });
+                
+        });
+
+
         vis.updateVis();
     }
+
     updateVis(){
         let vis = this;
 
@@ -157,8 +186,8 @@ class WordCloud{
         vis.layout.start();
 
         function draw(words) {
-            // console.log(words);
-            vis.svg.join("g")
+            console.log(words);
+            vis.word = vis.svg.join("g")
             .attr("transform", "translate(" + vis.layout.size()[0] / 2 + "," + vis.layout.size()[1] / 2 + ")")
             .selectAll("text")
             .data(words)
@@ -172,15 +201,32 @@ class WordCloud{
                   .text(function(d) { return d.text; });
           }
 
-          //this.characterCount();
+    //       vis.word.on('mouseover', (event, d) =>{
+    //         d3.select('body').select('#tooltip')
+    //         .style('display', 'block')
+    //         .style('left', (event.pageX + vis.margin.tooltipPadding) + 'px')   
+    //         .style('top', (event.pageY + vis.margin.tooltipPadding) + 'px')
+    //         .html(`
+    //             <div><h>${vis.title}<h><div>
+    //             <div>${vis.right} : ${d.key}</div>
+    //             <div> Number of Exoplanets: ${d.value}</div>
+    //   `).attr("class", "tooltip")
+    //   .style("background-color", "white")
+    //   .style("border", "solid")
+    //   .style("border-width", "2px")
+    //   .style("border-radius", "5px")
+    //   .style("padding", "5px")
+    //   .style("position", "absolute");
+    //       })
+
     }
     addCharacters(character){
         this.characters.push(character);
-        // console.log("added", this.characters)
+        console.log("added", this.characters)
     }
     removeCharacters(character){
         this.characters = this.characters.filter(function(d) {return !(character == d) });
-        // console.log("removed", this.characters)
+        console.log("removd", this.characters)
     }
 
     getAllWords(){
@@ -195,29 +241,60 @@ class WordCloud{
 
         })
         wordArr = wordArr.slice().sort((a,b) => d3.descending(a.size, b.size));
-        // console.log(wordArr);
+        console.log(wordArr);
         return wordArr;
         
         //vis.words = wordArr;
     }
-    getSeasonData(s){
+    addSeasons(seasons){
         let vis = this;
 
         let temp = new Array;
+        let szn = new Array;
 
-        if(s == "all"){
-            vis.data =vis.allData;
-        }
-        else {
-            s.forEach(p =>{
-                temp = vis.allData.filter(function(d) {return d.season == p }) + temp;
+            seasons.forEach(s =>{
+                if(s.status == true && s.season == "all"){
+                    szn =vis.allData;
+                    this.data = szn;
+                    return szn;
 
-            })
-        }
+                }
+                else if(s.status == true){
+                    temp = vis.allData.filter(function(d) {return d.season == s.season });
+                    temp.forEach(i =>{
+                        szn.push(i);
+                    });
 
-        vis.data = temp;
+                }
+                
+            });
 
-        vis.updateVis();
+        this.data = szn;
+        console.log("all data", this.data);
+        return szn;
+
+    }
+
+    removeSeasons(seasons){
+        let vis = this;
+
+        let temp = new Array;
+        let szn = new Array;
+
+            seasons.forEach(s =>{
+                if(s.status == false){
+                    temp = vis.data.filter(function(d) {return !(d.season == s.season) });
+                    temp.forEach(i =>{
+                        szn.push(i);
+                    });
+
+                } 
+            });
+
+
+        console.log(szn);
+        this.data = szn;
+        return szn;
 
     }
 
@@ -276,13 +353,4 @@ class WordCloud{
 
     }
 
-    characterCount(){
-        let vis = this;
-        let characterCount = d3.rollup(vis.data, v => v.length, d => d.character);
-        let characterArray = Array.from(characterCount, function(d){return {key: d[0], value: d[1]};});
-        let characterSorted = characterArray.slice().sort((a,b) => d3.descending(a.value, b.value));
-
-        //console.log(characterSorted);
-
-    }
 }
