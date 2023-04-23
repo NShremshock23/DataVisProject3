@@ -50,9 +50,9 @@ class WordCloud{
         this.rainicornPic = document.getElementById('rainicornPic');
         this.treeTrunkPic = document.getElementById('treePic');
 
-        let pictures = [this.finnPic, this.jakePic, this.bubblegumPic, this.marclinePic, this.BMOPic, this.LSPPic, this.icePic, this.flamePic, this.rainicornPic, this.treePic];
+        let pictures = [this.finnPic, this.jakePic, this.bubblegumPic, this.marclinePic, this.BMOPic, this.LSPPic, this.icePic, this.flamePic, this.treePic];
 
-        let chars = ["Finn", "Jake","Princess Bubblegum", "Marceline", "BMO", "LSP","Ice King", "Flame Princess", "Rainicorn", "Tree Trunks"];
+        let chars = ["Finn", "Jake","Princess Bubblegum", "Marceline", "BMO", "LSP","Ice King", "Flame Princess", "Tree Trunks"];
         let picArr = new Map;
         let j = 0;
         pictures.forEach(b =>{
@@ -64,7 +64,7 @@ class WordCloud{
         console.log(this.pictureArray);
 
 
-        let buttons = [this.finnButton, this.jakeButton, this.bubblegumButton, this.marcilineButton, this.BMOButton, this.LSPButton, this.iceButton, this.flamePrincessButton, this.rainicornButton, this.treeTrunkButton];
+        let buttons = [this.finnButton, this.jakeButton, this.bubblegumButton, this.marcilineButton, this.BMOButton, this.LSPButton, this.iceButton, this.flamePrincessButton,  this.treeTrunkButton];
 
         let buttonArr = new Map;
         let i = 0;
@@ -78,7 +78,7 @@ class WordCloud{
 
 
 
-        this.characters = ["Finn", "BMO", "Princess Bubblegum","Flame Princess", "Jake", "LSP", "Ice King", "Marceline", "Lady Rainicorn", "Tree Trunks"];
+        this.characters = ["Finn", "BMO", "Princess Bubblegum","Flame Princess", "Jake", "LSP", "Ice King", "Marceline", "Tree Trunks"];
         this.character = "Finn";
 
         let seasonButton = [this.allButton, this.oneButton,this.twoButton, this.threeButton, this.fourButton, this.fiveButton, this.sixButton, this.sevenButton, this.eightButton, this.nineButton, this.tenButton, this.elevenButton];
@@ -127,12 +127,15 @@ class WordCloud{
                     vis.removeCharacters(b.character);
                     
                     b.status = false;
+                    b.button.style.backgroundColor = '#F9F6F0';
 
                 }
                 else{
                     vis.addCharacters(b.character);
 
                     b.status = true;
+                    b.button.style.backgroundColor = vis.colorScale(b.character);
+                    
                 }
                 
                 vis.updateVis();
@@ -146,14 +149,17 @@ class WordCloud{
                 if(s.status){
                     s.status = false;
                     vis.removeSeasons(vis.seasonArray);
+                    b.button.style.backgroundColor = '#F9F6F0';
 
                 }
                 else{
                     s.status = true;
                     vis.addSeasons(vis.seasonArray);
+                    b.button.style.backgroundColor = 'rgba(204, 246, 204, 0.877)';
 
                     if(s.season == "all"){
                         s.status = false;
+                        b.button.style.backgroundColor = '#F9F6F0';
                     }
                 }
                 
@@ -198,7 +204,23 @@ class WordCloud{
                   .attr("transform", function(d) {
                     return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
                   })
-                  .text(function(d) { return d.text; });
+                  .text(function(d) { return d.text; })
+                  .on("mouseover",(event, d) =>{
+                            d3.select('body').select('#word_tooltip')
+                            .style('display', 'block')
+                            .style('left', (event.pageX + vis.margin.tooltipPadding) + 'px')   
+                            .style('top', (event.pageY + vis.margin.tooltipPadding) + 'px')
+                            .html(`
+                                <div> Character : ${d.character}</div>
+                                <div> Number of Times: ${d.size}</div>
+                      `).attr("class", "tooltip")
+                      .style("background-color", "white")
+                      .style("border", "solid")
+                      .style("border-width", "2px")
+                      .style("border-radius", "5px")
+                      .style("padding", "5px")
+                      .style("position", "absolute");
+                          });
           }
 
     //       vis.word.on('mouseover', (event, d) =>{
