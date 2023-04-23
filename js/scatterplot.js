@@ -18,9 +18,9 @@ class Scatterplot {
         vis.getId = (d) => d.toLowerCase().replace(/\s+/g, '').replace('\'', '').replace('\"', '')
 
         // Select input elements
-        vis.xScaleCheckbox = d3.select('#scatter-x-scale')//.on('input', vis.updateVis())
-        vis.yScaleCheckbox = d3.select('#scatter-y-scale')//.on('input', vis.updateVis())
-        vis.radScaleCheckbox = d3.select('#scatter-radius-scale')//.on('input', vis.updateVis())
+        vis.xScaleCheckbox = d3.select('#scatter-x-scale')
+        vis.yScaleCheckbox = d3.select('#scatter-y-scale')
+        vis.radScaleCheckbox = d3.select('#scatter-radius-scale')
 
         // Set up chart area
         vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
@@ -30,15 +30,10 @@ class Scatterplot {
             .attr('width', vis.config.containerWidth)
             .attr('height', vis.config.containerHeight);
 
-            vis.chart = vis.svg.append('g')
+        vis.chart = vis.svg.append('g')
             .attr('transform', `translate(${vis.config.margin.left}, ${vis.config.margin.top})`);
-
-        // Initialize line
-        vis.linePath = vis.chart.append('path')
-            .attr('class', 'chart-line');
         
         // Initialize scales
-        // Domain for each scale is set in updateVis() to match possibly filtered data
         vis.xScaleLinear = d3.scaleLinear()
             .range([0, vis.width]);
         vis.yScaleLinear = d3.scaleLinear()
@@ -54,8 +49,10 @@ class Scatterplot {
             .range([0, 10]);
     
         // Initialize axes
-        vis.xAxis = d3.axisBottom(vis.xScaleLinear);
-        vis.yAxis = d3.axisLeft(vis.yScaleLinear);
+        vis.xAxis = d3.axisBottom(vis.xScaleLinear)
+            .tickSizeOuter(0)
+        vis.yAxis = d3.axisLeft(vis.yScaleLinear)
+            .tickSizeOuter(0);
     
         // Draw axes (at first without accurate scale domains, fixed by renderVis)
         vis.xAxisGroup = vis.chart.append('g')
@@ -88,47 +85,6 @@ class Scatterplot {
             .attr('text-anchor', 'middle')
             .text('# Episodes Appeared In');
 
-        // DATA PROCESSING
-        // TODO: move to main.js, unify with Colin's data
-        vis.characters = []
-
-        vis.data.forEach(d => {
-            if (d.character != '') {
-
-                let character = vis.characters.find((o, i) => { 
-                    if (o.id == vis.getId(d.character)) {
-                        // Count line, words
-                        o.lines += 1
-                        o.words += +vis.countAllQuoteWords(d)
-                        
-                        // Count the ep if it hasn't already been counted for current character (ASSUMES CHRONOLOGICAL DATA ORDER)
-                        if (o.lastSeason < d.season || (o.lastSeason == d.season && o.lastEp < +d.ep_num)) {
-                            o.episodes++
-                            o.lastSeason = +d.season
-                            o.lastEp = +d.ep_num
-                        }
-
-                        return true
-                    }
-                })
-
-                // Add a record for the current character if they don't already have one
-                if (!character) {
-                    vis.characters.push({
-                        'id': vis.getId(d.character),
-                        'name': d.character,
-                        'episodes': 1,
-                        'lines': 1,
-                        'words': vis.countAllQuoteWords(d),     // TODO
-                        'lastSeason': +d.season,
-                        'lastEp': +d.ep_num
-                    })
-                }
-            }
-        })
-
-        // console.log(vis.characters)
-
         vis.xScaleCheckbox.on('click', () => {vis.updateVis()})
         vis.yScaleCheckbox.on('click', () => {vis.updateVis()})
         vis.radScaleCheckbox.on('click', () => {vis.updateVis()})
@@ -144,28 +100,28 @@ class Scatterplot {
 
         if (vis.xScaleCheckbox.property('checked')) {
             vis.xAxis.scale(vis.xScaleLog)
-            vis.xScaleLog.domain([1, d3.max(vis.characters, d => vis.xValue(d))])
+            vis.xScaleLog.domain([1, d3.max(vis.data.characterData, d => vis.xValue(d))])
         }
         else {
             vis.xAxis.scale(vis.xScaleLinear)
-            vis.xScaleLinear.domain([0, d3.max(vis.characters, d => vis.xValue(d))])
+            vis.xScaleLinear.domain([0, d3.max(vis.data.characterData, d => vis.xValue(d))])
         }
         
         if (vis.yScaleCheckbox.property('checked')) {
             vis.yAxis.scale(vis.yScaleLog)
-            vis.yScaleLog.domain([1, d3.max(vis.characters, d => vis.yValue(d))])
+            vis.yScaleLog.domain([1, d3.max(vis.data.characterData, d => vis.yValue(d))])
         }
         else {
             vis.yAxis.scale(vis.yScaleLinear)
-            vis.yScaleLinear.domain([0, d3.max(vis.characters, d => vis.yValue(d))])
+            vis.yScaleLinear.domain([0, d3.max(vis.data.characterData, d => vis.yValue(d))])
         }
 
         if (vis.radScaleCheckbox.property('checked')) {
-            vis.radScaleLog.domain([1, d3.max(vis.characters, d => vis.radValue(d))])
+            vis.radScaleLog.domain([1, d3.max(vis.data.characterData, d => vis.radValue(d))])
             vis.radScale = vis.radScaleLog
         }
         else {
-            vis.radScaleLinear.domain([0, d3.max(vis.characters, d => vis.radValue(d))])
+            vis.radScaleLinear.domain([0, d3.max(vis.data.characterData, d => vis.radValue(d))])
             vis.radScale = vis.radScaleLinear
         }
 
@@ -180,7 +136,7 @@ class Scatterplot {
 
         // Add circles
         vis.circles = vis.chart.selectAll('.point')
-            .data(vis.characters)
+            .data(vis.data.characterData)
             .join('circle')
                 .attr('class', 'point')
                 .attr('fill', 'steelblue')
@@ -193,6 +149,7 @@ class Scatterplot {
                         .html(`
                             <div class="tooltip-title">${d.name}</div>
                             <div>Episode Appearances: ${d.episodes}</div>
+                            <div>Scene Appearances: ${d.scenes}</div>
                             <div>Lines of Dialog: ${d.lines}</div>
                             <div>Total Words Spoken: ${d.words}</div>
                         `);
@@ -224,12 +181,6 @@ class Scatterplot {
 
         // Splits the string by word
         quoteWords = quoteWords.split(" ");
-
-        // if (vis.getId(d.character) == 'jake') {
-        //     console.log(d.quote)
-        //     console.log(quoteWords)
-        //     console.log(quoteWords.length)
-        // } 
 
         // Return the number of words
         return quoteWords.length 
