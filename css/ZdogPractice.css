@@ -20,6 +20,10 @@ treeTrunkColor = '#B52C33'; */
  .charBtn{
   background: none;
   border: none;
+  cursor: pointer;
+ }
+ img {
+  padding: 5px;
  }
 
 #Finn :hover{
