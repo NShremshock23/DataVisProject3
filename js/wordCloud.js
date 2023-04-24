@@ -1,5 +1,6 @@
 class WordCloud{
     constructor(_data){
+        //character colors
         this.finnColor = '#1897CA';
         this.bubblegumColor = '#FF61D0';
         this.jakeColor = '#FF971A';
@@ -10,10 +11,11 @@ class WordCloud{
         this.lumpyColor = '#CC93FA';
         this.treeTrunkColor = '#e3e00a';
 
-       // Lumpy Space Princess
+        //data
         this.allData = _data;
         this.data = _data;
 
+        //season buttons
         this.oneButton = document.getElementById('szn1');
         this.twoButton = document.getElementById('szn2');
         this.threeButton = document.getElementById('szn3');
@@ -25,6 +27,7 @@ class WordCloud{
         this.nineButton = document.getElementById('szn9');
         this.tenButton = document.getElementById('szn10');
 
+        //chararcter buttons
         this.finnButton = document.getElementById('Finn');
         this.jakeButton = document.getElementById('Jake');
         this.bubblegumButton = document.getElementById('bubblegum');
@@ -35,32 +38,11 @@ class WordCloud{
         this.flamePrincessButton = document.getElementById('flamePrincess');
         this.treeTrunkButton = document.getElementById('TreeTrunk');
 
-        this.finnPic = document.getElementById('finnPic');
-        this.jakePic = document.getElementById('jakePic');
-        this.bubblegumPic = document.getElementById('bubblegumPic');
-        this.marclinePic = document.getElementById('marclinePic');
-        this.BMOPic = document.getElementById('BMOPic');
-        this.LSPPic= document.getElementById('LSPPic');
-        this.icePic = document.getElementById('icePic');
-        this.flamePic = document.getElementById('flamePic');
-        this.treeTrunkPic = document.getElementById('treePic');
 
-        let pictures = [this.finnPic, this.jakePic, this.bubblegumPic, this.marclinePic, this.BMOPic, this.LSPPic, this.icePic, this.flamePic, this.treePic];
-
-        let chars = ["Finn", "Jake","Princess Bubblegum", "Marceline", "BMO", "LSP","Ice King", "Flame Princess", "Tree Trunks"];
-        let picArr = new Map;
-        let j = 0;
-        pictures.forEach(b =>{
-            picArr.set(b,chars[j]);
-            j++; 
-        });
-
-        this.pictureArray = Array.from(picArr, function(d){return {picture: d[0], character: d[1]};});
-        console.log(this.pictureArray);
-
-
+        //Put characterbuttons in array with their status and character
         let buttons = [this.finnButton, this.jakeButton, this.bubblegumButton, this.marcilineButton, this.BMOButton, this.LSPButton, this.iceButton, this.flamePrincessButton,  this.treeTrunkButton];
 
+        let chars = ["Finn", "Jake", "Princess Bubblegum", "Marceline", "BMO", "LSP", "Ice King", "Flame Princess", "Tree Trunks"];
         let buttonArr = new Map;
         let i = 0;
         buttons.forEach(b =>{
@@ -72,10 +54,10 @@ class WordCloud{
         console.log(this.buttonArray);
 
 
-
+//Selected Characters
         this.characters = ["Finn", "BMO", "Princess Bubblegum","Flame Princess", "Jake", "LSP", "Ice King", "Marceline", "Tree Trunks"];
-        this.character = "Finn";
 
+        //Put season buttons in an array with their status and season number
         let seasonButton = [this.oneButton,this.twoButton, this.threeButton, this.fourButton, this.fiveButton, this.sixButton, this.sevenButton, this.eightButton, this.nineButton, this.tenButton];
         let sn = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
         let seasonArr = new Map;
@@ -86,15 +68,13 @@ class WordCloud{
         });
 
         this.seasonArray = Array.from(seasonArr, function(d){return {button: d[0], season: d[1], status: true};});
-        console.log(this.seasonArray);
+        //console.log(this.seasonArray);
         
+        //Get initial words
         
-       // this.seasons = this.addSeasons(this.seasonArray);
-
         this.words = this.getAllWords();
         this.allWords = this.words;
 
-       // this.color = this.getCharacterColor();
   
 
         this.innitVis();
@@ -112,10 +92,12 @@ class WordCloud{
         .attr("height", vis.height + vis.margin.left + vis.margin.right)
         .append("g").attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
 
+        //Color scale for characters
         vis.colorScale = d3.scaleOrdinal()
         .domain(["Finn", "Jake", "Princess Bubblegum", "Ice King", "BMO", "Lady Rainicorn", "Tree Trunks", "LSP", "Marceline", "Flame Princess"])
         .range([vis.finnColor, vis.jakeColor, vis.bubblegumColor, vis.iceColor, vis.BMOColor, vis.rainacornColor, vis.treeTrunkColor, vis.lumpyColor, vis.vampireColor, vis.flameColor]);
 
+        //set events for when buttons are clicked to remove or add to the character list
         vis.buttonArray.forEach(b =>{
             b.button.addEventListener('click', function() {
                 if(b.status){
@@ -139,6 +121,7 @@ class WordCloud{
         });
 
 
+        //set click event for season buttons to remove or add seasons to the list
         vis.seasonArray.forEach(s =>{
             s.button.addEventListener('click', function() {
                 if(s.status){
@@ -151,11 +134,6 @@ class WordCloud{
                     s.status = true;
                     vis.addSeasons(vis.seasonArray);
                     s.button.style.backgroundColor = 'rgba(204, 246, 204, 0.877)';
-
-                    // if(s.season == "all"){
-                    //     s.status = false;
-                    //     s.button.style.backgroundColor = '#F9F6F0';
-                    // }
                 }
                 
                 vis.updateVis();
@@ -172,6 +150,7 @@ class WordCloud{
 
         vis.words = vis.getAllWords();
 
+        //set font scale
         vis.fontScale = d3.scaleLinear()
         .domain([d3.max(vis.words, d=> d.size), d3.min(vis.words, d => d.size)])
         .range([ 70, 10]);
@@ -187,7 +166,7 @@ class WordCloud{
         vis.layout.start();
 
         function draw(words) {
-            console.log(words);
+            //console.log(words);
             vis.word = vis.svg.join("g")
             .attr("transform", "translate(" + vis.layout.size()[0] / 2 + "," + vis.layout.size()[1] / 2 + ")")
             .selectAll("text")
@@ -199,42 +178,9 @@ class WordCloud{
                   .attr("transform", function(d) {
                     return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
                   })
-                  .text(function(d) { return d.text; })
-                  .on("mouseover",(event, d) =>{
-                            d3.select('body').select('#word_tooltip')
-                            .style('display', 'block')
-                            .style('left', (event.pageX + vis.margin.tooltipPadding) + 'px')   
-                            .style('top', (event.pageY + vis.margin.tooltipPadding) + 'px')
-                            .html(`
-                                <div> Character : ${d.character}</div>
-                                <div> Number of Times: ${d.size}</div>
-                      `).attr("class", "tooltip")
-                      .style("background-color", "white")
-                      .style("border", "solid")
-                      .style("border-width", "2px")
-                      .style("border-radius", "5px")
-                      .style("padding", "5px")
-                      .style("position", "absolute");
-                          });
+                  .text(function(d) { return d.text; });
           }
 
-    //       vis.word.on('mouseover', (event, d) =>{
-    //         d3.select('body').select('#tooltip')
-    //         .style('display', 'block')
-    //         .style('left', (event.pageX + vis.margin.tooltipPadding) + 'px')   
-    //         .style('top', (event.pageY + vis.margin.tooltipPadding) + 'px')
-    //         .html(`
-    //             <div><h>${vis.title}<h><div>
-    //             <div>${vis.right} : ${d.key}</div>
-    //             <div> Number of Exoplanets: ${d.value}</div>
-    //   `).attr("class", "tooltip")
-    //   .style("background-color", "white")
-    //   .style("border", "solid")
-    //   .style("border-width", "2px")
-    //   .style("border-radius", "5px")
-    //   .style("padding", "5px")
-    //   .style("position", "absolute");
-    //       })
 
     }
     addCharacters(character){
@@ -247,10 +193,10 @@ class WordCloud{
     }
 
     getAllWords(){
+        //Adds the words form all the characters into one array
         let vis = this;
         let wordArr = [];
         vis.characters.forEach(d => {
-            //console.log(this.getAllChartacterWords(d));
             let chars = this.getAllChartacterWords(d);
             chars.forEach(s =>{
                 wordArr.push(s);
@@ -258,10 +204,9 @@ class WordCloud{
 
         })
         wordArr = wordArr.slice().sort((a,b) => d3.descending(a.size, b.size));
-        console.log(wordArr);
+       // console.log(wordArr);
         return wordArr;
         
-        //vis.words = wordArr;
     }
     addSeasons(seasons){
         let vis = this;
@@ -287,7 +232,7 @@ class WordCloud{
             });
 
         this.data = szn;
-        console.log("all data", this.data);
+       // console.log("all data", this.data);
         return szn;
 
     }
@@ -309,7 +254,7 @@ class WordCloud{
             });
 
 
-        console.log(szn);
+       // console.log(szn);
         this.data = szn;
         return szn;
 
