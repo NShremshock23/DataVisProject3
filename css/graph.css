@@ -12,72 +12,49 @@
     zoom: 75%;
 }
 
-#tooltip {
-    position: absolute;
-    background: #f6eeee;
-    box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
-    border: 1px solid #dddddd;
-    min-width: 30px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 2px;
-    color: #333;
+#graph-container {
+    display: grid;
+    place-items: center;
+    overflow: scroll;
+    height: 500px;
+    width: 1000px;
+    border: 1px solid #b0b0b0;
+    border-radius: 10px;
+}
+.btn-label {
+    font-size: 14px;
 }
 
-#tooltip {
-    position: absolute;
-    background: #f6eeee;
-    box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
-    border: 1px solid #dddddd;
-    min-width: 30px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 2px;
-    color: #333;
+.graph-btn {
+    margin: 5px 10px;
 }
 
-.char-finn {
-    fill: #1897CA;
+.graph-btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
-.char-jake {
-    fill: #FF971A;
-}
-
-.char-princessbubblegum {
-    fill: #FF61D0;
-}
-
-.char-iceking {
-    fill: #344980;
-}
-
-.char-flameprincess {
-    fill: #FF4006;
-}
-
-.char-bmo {
-    fill: #59877C;
-}
-
-.char-lsp {
-    fill: #CC93FA;
-}
-
-.char-ladyrainicorn {
-    fill: #FFB1FD;
-}
-
-.char-treetrunks {
-    fill: #B52C33;
-}
-
-.char-marceline {
-    fill: #851F1D;
-}
-
-.char-other {
-    fill: #b4b4b4;
-}
+/* width */
+#graph-container::-webkit-scrollbar {
+    background: #E0E0E0;
+    border-radius: 10px;
+  }
+  
+  /* Track */
+#graph-container::-webkit-scrollbar-track {
+    background: #E0E0E0;
+    border-radius: 10px;
+  }
+  
+  /* Handle */
+#graph-container::-webkit-scrollbar-thumb {
+    background: #AAA;
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+#graph-container::-webkit-scrollbar-thumb:hover {
+    background: #BBB;
+    border-radius: 10px;
+  }

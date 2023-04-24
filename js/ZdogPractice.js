@@ -179,37 +179,12 @@ const smile = new Zdog.Ellipse({
     backface: false,
 });
 
-const jake = new Zdog.Illustration({
-    // set canvas with selector
-    element: '.jake',
-    dragRotate: true,
-    rotate: {x: -TAU/8, y: 5},
-  });
 
-  const body = new Zdog.Shape({
-    addTo: jake,
-    path: [ {y: 0}, {y: 30}],
-    stroke:70,
-    translate: { y: -40},
-    color: "#FAD02C",
-});
-const jakeEye = new Zdog.Ellipse({
-    addTo: body,
-    diameter: 12,
-    quarters: 4,
-    fill: true,
-    color: '#FFFF',
-    stroke: 5,
-    backface: false,
-
-})
 
 
 
 function animate(){
     illo.rotate.y += 0.03;
-    //illo.rotate.x += 0.05;
-    jake.updateRenderGraph()
     illo.updateRenderGraph()
 
     requestAnimationFrame(animate)

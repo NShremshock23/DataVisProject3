@@ -8,14 +8,12 @@ class WordCloud{
         this.vampireColor = '#851F1D';
         this.flameColor = '#FF4006';
         this.lumpyColor = '#CC93FA';
-        this.rainacornColor = '#FFB1FD';
-        this.treeTrunkColor = '#B52C33';
+        this.treeTrunkColor = '#e3e00a';
 
        // Lumpy Space Princess
         this.allData = _data;
         this.data = _data;
 
-        this.allButton = document.getElementById('sznAll');
         this.oneButton = document.getElementById('szn1');
         this.twoButton = document.getElementById('szn2');
         this.threeButton = document.getElementById('szn3');
@@ -26,7 +24,6 @@ class WordCloud{
         this.eightButton = document.getElementById('szn8');
         this.nineButton = document.getElementById('szn9');
         this.tenButton = document.getElementById('szn10');
-        this.elevenButton = document.getElementById('szn11');
 
         this.finnButton = document.getElementById('Finn');
         this.jakeButton = document.getElementById('Jake');
@@ -36,7 +33,6 @@ class WordCloud{
         this.LSPButton = document.getElementById('LSP');
         this.iceButton = document.getElementById('IceKing');
         this.flamePrincessButton = document.getElementById('flamePrincess');
-        this.rainicornButton = document.getElementById('Rainicorn');
         this.treeTrunkButton = document.getElementById('TreeTrunk');
 
         this.finnPic = document.getElementById('finnPic');
@@ -47,7 +43,6 @@ class WordCloud{
         this.LSPPic= document.getElementById('LSPPic');
         this.icePic = document.getElementById('icePic');
         this.flamePic = document.getElementById('flamePic');
-        this.rainicornPic = document.getElementById('rainicornPic');
         this.treeTrunkPic = document.getElementById('treePic');
 
         let pictures = [this.finnPic, this.jakePic, this.bubblegumPic, this.marclinePic, this.BMOPic, this.LSPPic, this.icePic, this.flamePic, this.treePic];
@@ -81,8 +76,8 @@ class WordCloud{
         this.characters = ["Finn", "BMO", "Princess Bubblegum","Flame Princess", "Jake", "LSP", "Ice King", "Marceline", "Tree Trunks"];
         this.character = "Finn";
 
-        let seasonButton = [this.allButton, this.oneButton,this.twoButton, this.threeButton, this.fourButton, this.fiveButton, this.sixButton, this.sevenButton, this.eightButton, this.nineButton, this.tenButton, this.elevenButton];
-        let sn = ["all", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        let seasonButton = [this.oneButton,this.twoButton, this.threeButton, this.fourButton, this.fiveButton, this.sixButton, this.sevenButton, this.eightButton, this.nineButton, this.tenButton];
+        let sn = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
         let seasonArr = new Map;
         let k = 0;
         seasonButton.forEach(b =>{
@@ -109,8 +104,8 @@ class WordCloud{
         let vis = this;
 
         vis.margin = {top: 10, right: 10, bottom: 10, left: 10};
-        vis.width = 450 - this.margin.left - vis.margin.right;
-        vis.height = 450 - vis.margin.top - vis.margin.bottom;
+        vis.width = 400 - this.margin.left - vis.margin.right;
+        vis.height = 360 - vis.margin.top - vis.margin.bottom;
 
         vis.svg = d3.select('#wordCloud').append("svg")
         .attr("width", vis.width + vis.margin.left + vis.margin.right)
@@ -157,10 +152,10 @@ class WordCloud{
                     vis.addSeasons(vis.seasonArray);
                     s.button.style.backgroundColor = 'rgba(204, 246, 204, 0.877)';
 
-                    if(s.season == "all"){
-                        s.status = false;
-                        s.button.style.backgroundColor = '#F9F6F0';
-                    }
+                    // if(s.season == "all"){
+                    //     s.status = false;
+                    //     s.button.style.backgroundColor = '#F9F6F0';
+                    // }
                 }
                 
                 vis.updateVis();

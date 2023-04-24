@@ -1,17 +1,9 @@
-/* this.finnColor = '#1897CA';
-        this.bubblegumColor = '#FF61D0';
-        this.jakeColor = '#FF971A';
-        this.iceColor = '#344980';
-        this.BMOColor = '#59877C';
-        this.vampireColor = '#851F1D';
-        this.flameColor = '#FF4006';
-        this.lumpyColor = '#CC93FA';
-        this.rainacornColor = '#FFB1FD';
-treeTrunkColor = '#B52C33'; */
 
-.finn {
-    background: rgb(185, 28, 28);
+  #picture{
+    background-image: url(background.png);
   }
+  
+  
 
  body{
   background-image: url(pictures\442432.jpg);
@@ -20,6 +12,10 @@ treeTrunkColor = '#B52C33'; */
  .charBtn{
   background: none;
   border: none;
+  cursor: pointer;
+ }
+ img {
+  padding: 5px;
  }
  .seasonBtn{
   background: rgba(204, 246, 204, 0.877);

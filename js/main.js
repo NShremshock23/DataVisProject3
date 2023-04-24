@@ -104,8 +104,10 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
             // if 
         });
 
+        let hideNotSelectedInput = document.getElementById('hide-not-selected')
+        data.hideNotSelected = hideNotSelectedInput.checked
+
         // Get list of scenes in format {season-episode-scene, characters in scene}
-        
         data.scenes = [...new Map(data.map(item => [item.seasonEpisodeScene,
             item.chars_in_scene.split(', ')
                 .filter(c => !(nonCharacters.includes(getId(c)) // filters out "all" and similar characters
@@ -135,66 +137,19 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
                 data.frequentCharacters[getId(character)] = data.characterFreq[getId(character)]
         }
 
-        // Turning frequent characters into a list, sorting, and getting top 50
-        data.frequentCharacters = Object.entries(data.frequentCharacters).sort((a,b) => b[1] - a[1]).splice(0,100)
-        
-        data.links = []
-        data.nodes = []
-
-        // Create links and nodes
-        data.scenes.forEach(d => {
-            // Loop through the frequent characters from the current scene to be a link target
-            for (let target of d[1].filter(c => data.frequentCharacters.some(f => getId(f[0]) == getId(c)))){
-
-                let targetId = getId(target) // Get id form of target
-
-                // If that character doesn't have a node yet, make one
-                if(!data.nodes.some(n => getId(n.label) == targetId)) {
-                    data.nodes.push({id: targetId, label: target, sceneCount: data.characterFreq[targetId]})
-                }
-                // Loop through the frequent characters from the current scene again (not including the target character) to be a link source
-                for(let source of d[1].filter(c => getId(c) != targetId && data.frequentCharacters.some(f => getId(f[0]) == getId(c)))) {
-
-                    let sourceId = getId(source) // get id form of source
-
-                    // if((!((sourceId == "finn" || sourceId == "jake") || (targetId == "finn" || targetId == "jake"))
-                    //     || mainCharacters.includes(targetId) && (sourceId == "finn" || sourceId == "jake"))
-                    //     || (mainCharacters.includes(sourceId) && (targetId == "finn" || targetId == "jake"))){
-                        // If the two characters have an existing link, increment the strength
-                        if(data.links.some(l => l.target == targetId && l.source == sourceId))
-                            data.links.filter(l => (l.target == targetId && l.source == sourceId))[0].strength += 1
-    
-                        // If the characters have a link in the opposite direction, skip (avoids double dipping links)
-                        else if(data.links.some(l => (l.target == sourceId && l.source == targetId)))
-                            continue
-    
-                        // Otherwise create a new link
-                        else 
-                            data.links.push({ target: targetId, source: sourceId, strength: 1})
-
-                    // }
-                }
-            }
-        })
-
-        // Go through links and calculate actual strength (occurrences together / total scenes of source + target)
-        data.links.forEach(d => {
-            d.strength = d.strength / (data.characterFreq[d.target] + data.characterFreq[d.source])
-        })
-
         let wordCloud = new WordCloud(data);
 
         let forceDirectedGraph = new ForceDirectedGraph({
 			parentElement: '#force-directed-graph',
-			'containerHeight': 2000,
-			'containerWidth': 2000
+			'containerHeight': 3000,
+			'containerWidth': 3200
 		}, data)
 		forceDirectedGraph.updateVis()
 
         let scatterplot = new Scatterplot({
 			parentElement: '#scatterplot',
-			'containerHeight': 600,
-			'containerWidth': 800
+			'containerHeight': 360,
+			'containerWidth': 700
 		}, data)
 		scatterplot.updateVis()
 
@@ -204,9 +159,21 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
 			'containerWidth': 1500
 		}, data)
 		histogram.updateVis()
+        
+        const graphContainer = document.querySelector("#graph-container")
+
+        graphContainer.scrollTo({
+            left: 700,
+            top: 600,
+            behavior: "smooth"
+        });
+
+        hideNotSelectedInput.addEventListener('change', (event) => {
+            data.hideNotSelected = !data.hideNotSelected
+        })
     })
 
-    let getId = (d) => d.toLowerCase().replace(/\s+/g, '')
+let getId = (d) => d.toLowerCase().replace(/\s+/g, '')
 
     function countAllQuoteWords(d) {
         let vis = this
@@ -227,173 +194,173 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
         return quoteWords.length 
     }
 
-    //Take in character, get it's id form and return it's actual character
-    function processCharacters(character) {
-        switch(getId(character)){
-            case "pen":
-            case "futurefinn":
-            case "pastfinn":
-                return "Finn"
+//Take in character, get it's id form and return it's actual character
+function processCharacters(character) {
+    switch(getId(character)){
+        case "pen":
+        case "futurefinn":
+        case "pastfinn":
+            return "Finn"
 
-            case "jake'ssubconscious":
-            case "babyjake":
-                return "Jake"
+        case "jake'ssubconscious":
+        case "babyjake":
+            return "Jake"
 
-            case "simon":
-            case "simonpetrikov":
-                return "Ice King"
+        case "simon":
+        case "simonpetrikov":
+            return "Ice King"
 
-            case "princessbubblegum'svoice":
-            case "bubblegum":
-            case "youngbubblegum":
-            case "youngprincessbubblegum":
-            case "princess":
-            case "bonnie": 
-                return "Princess Bubblegum"
+        case "princessbubblegum'svoice":
+        case "bubblegum":
+        case "youngbubblegum":
+        case "youngprincessbubblegum":
+        case "princess":
+        case "bonnie": 
+            return "Princess Bubblegum"
 
-            case "marcy":
-                return "Marceline"
+        case "marcy":
+            return "Marceline"
 
-            case "lady":
-                return "Lady Rainicorn"
+        case "lady":
+            return "Lady Rainicorn"
 
-            case "lsp":
-                return "Lumpy Space Princess"
+        case "lsp":
+            return "Lumpy Space Princess"
 
-            case "normalman":
-                return "Magic Man"
+        case "normalman":
+            return "Magic Man"
 
-            case "gunther":
-            case "icething":
-                return "Gunter"
+        case "gunther":
+        case "icething":
+            return "Gunter"
+        
+        case "lich":
+            return "The Lich"
+
+        case "starchie":
+            return "Starchy"
+
+        case "t.v.":
+            return "TV"
+
+        case "vampireking":
+        case "hunson":
+            return "Hunson Abadeer"
+        
+        case "earloflemongrab":
+        case "lemongrabclone":
+        case "lemongrab":
+        case "lemongrab2":
+        case "lemongrab3":
+            return "Lemongrabs"
+
+        case "holo-margaret":
+            return "Margaret"
+        
+        case "fernface":
+            return "Fern"
             
-            case "lich":
-                return "The Lich"
+        case "gob":
+        case "glob":
+        case "grob":
+        case "grod":
+            return "Grob Gob Glob Grod"
+        
+        case "mrpig":
+            return "Mr. Pig"
 
-            case "starchie":
-                return "Starchy"
+        case "unclegumbald":
+            return "Gumbald"
 
-            case "t.v.":
-                return "TV"
+        case "fionna\"":
+            return "Fionna"
 
-            case "vampireking":
-            case "hunson":
-                return "Hunson Abadeer"
-            
-            case "earloflemongrab":
-            case "lemongrabclone":
-            case "lemongrab":
-            case "lemongrab2":
-            case "lemongrab3":
-                return "Lemongrabs"
+        case "dirtbeerguy":
+            return "Root Beer Guy"
 
-            case "holo-margaret":
-                return "Margaret"
-            
-            case "fernface":
-                return "Fern"
-                
-            case "gob":
-            case "glob":
-            case "grob":
-            case "grod":
-                return "Grob Gob Glob Grod"
-            
-            case "mrpig":
-                return "Mr. Pig"
+        case "hotdogknight#1":
+        case "hotdogknight#2":
+        case "hotdogknight#3":
+        case "hotdogknight#4":
+            return "Hot Dog Knights"
 
-            case "unclegumbald":
-                return "Gumbald"
+        case "goblinguard1":
+        case "goblinguard2":
+        case "goblin":
+            return "Goblins"
+        
+        case "gnomeruler":
+            return "Gnomes"
 
-            case "fionna\"":
-                return "Fionna"
+        case "long-hairednymph":
+        case "short-hairednymph":
+        case "nymph":
+            return "Nymphs"
 
-            case "dirtbeerguy":
-                return "Root Beer Guy"
+        case "gumballguardian":
+            return "Gumball Guardians"
 
-            case "hotdogknight#1":
-            case "hotdogknight#2":
-            case "hotdogknight#3":
-            case "hotdogknight#4":
-                return "Hot Dog Knights"
+        case "bananaguard#1":
+        case "bananaguard#2":
+        case "anotherbananaguard":
+        case "bananaguard":
+        case "bananaguard1":
+        case "bananaguard2":
+        case "unidentifiablebananaguard":
+            return "Banana Guards"
 
-            case "goblinguard1":
-            case "goblinguard2":
-            case "goblin":
-                return "Goblins"
-            
-            case "gnomeruler":
-                return "Gnomes"
+        case "headmarauder":
+        case "marauder":
+            return "Marauders"
 
-            case "long-hairednymph":
-            case "short-hairednymph":
-            case "nymph":
-                return "Nymphs"
+        case "candyperson":
+        case "candyperson1":
+        case "candyperson2":
+        case "candyperson#29":
+        case "candyperson#1":
+            return "Candy People"
 
-            case "gumballguardian":
-                return "Gumball Guardians"
+        case "red-tiebusinessman":
+            return "Businessmen"
 
-            case "bananaguard#1":
-            case "bananaguard#2":
-            case "anotherbananaguard":
-            case "bananaguard":
-            case "bananaguard1":
-            case "bananaguard2":
-            case "unidentifiablebananaguard":
-                return "Banana Guards"
+        case "oneballoon":
+            return "Balloons"
 
-            case "headmarauder":
-            case "marauder":
-                return "Marauders"
+        case "penguin":
+            return "Penguins"
 
-            case "candyperson":
-            case "candyperson1":
-            case "candyperson2":
-            case "candyperson#29":
-            case "candyperson#1":
-                return "Candy People"
+        case "flameguard":
+            return "Flame Guards"
 
-            case "red-tiebusinessman":
-                return "Businessmen"
+        case "greenlollipopgirl":
+            return "Lollipop Girl"
 
-            case "oneballoon":
-                return "Balloons"
+        case "moldo":
+            return "Moldos"
+        
+        case "headclownnurse":
+        case "bigclownnurse":
+            return "Clown Nurses"
 
-            case "penguin":
-                return "Penguins"
+        case "fatvillager":
+        case "fatvillagers":
+        case "villager":
+            return "Villagers"
 
-            case "flameguard":
-                return "Flame Guards"
+        case "candychild2":
+        case "candychild3":
+        case "candychild":
+            return "Candy Children"
 
-            case "greenlollipopgirl":
-                return "Lollipop Girl"
+        case "dmo":
+        case "smo1":
+        case "smo3":
+        case "smo4":
+        case "mo":
+        case "allmo":
+            return "MOs"
 
-            case "moldo":
-                return "Moldos"
-            
-            case "headclownnurse":
-            case "bigclownnurse":
-                return "Clown Nurses"
-
-            case "fatvillager":
-            case "fatvillagers":
-            case "villager":
-                return "Villagers"
-
-            case "candychild2":
-            case "candychild3":
-            case "candychild":
-                return "Candy Children"
-
-            case "dmo":
-            case "smo1":
-            case "smo3":
-            case "smo4":
-            case "mo":
-            case "allmo":
-                return "MOs"
-
-            default:
-                return character
-        }
+        default:
+            return character
     }
+}
