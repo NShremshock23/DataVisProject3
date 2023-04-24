@@ -156,23 +156,17 @@ class Histogram {
         // TODO: Data processing
         vis.stackedData = []
 
-        console.log(vis.charSelected)
-
         // Stack order reversed to place Other at the bottom
         // stack keys are filtered for character selection
         vis.stack = d3.stack().keys(vis.lineKeysMain.filter(k => { return vis.charSelected[k.split('_')[1]] })).order(d3.stackOrderReverse)
         vis.epData = vis.data.episodeData.filter(d => {return vis.seasonSelected[d.id.split('-')[0] - 1]})
-        console.log(vis.epData)
         // vis.epData.forEach(d => {
         //     for (let key of vis.lineKeysMain) {
         //         if(!vis.charSelected[key.split('_')[1]]) d[key] = 0
         //     }
         // })
-        console.log(vis.epData)
-        console.log(vis.data.episodeData)
 
         vis.stackedData = vis.stack(vis.epData)
-        console.log(vis.stackedData)
 
         vis.xValue = d => d.id;
         vis.yValue = d => d.linesTotal;
@@ -188,7 +182,6 @@ class Histogram {
             vis.yAxis.scale(vis.yScaleLinear)
             // vis.yScaleLinear.domain([0, d3.max(vis.epData, d => vis.yValue(d))])
             vis.yScaleLinear.domain([0, d3.max(vis.stackedData, d => d3.max(d, g => g[1])) + 5])
-            console.log(d3.max(vis.stackedData, d => d3.max(d, g => g[1])))
         }
 
         vis.renderVis();
