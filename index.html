@@ -6,60 +6,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdVisture Time or something funnier</title>
 
+
+    <div id="picture">
+
+        <div id="logo">
+            <img src="pictures/Logo.png" width="400" height="200">
+
+        </div>
+        <canvas class="finn" width="200" height="200"></canvas>
+    </div>
     <link rel="stylesheet" href="css/graph.css">
     <link rel="stylesheet" href="css/switch.css">
     <link rel="stylesheet" href="css/ZdogPractice.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <canvas class="finn" width="200" height="200"></canvas>
-    <canvas class="jake" width="200" height="200"></canvas>
-    <div id="seasons">
-        <button id="sznAll">Select All</button>
-        <button id="szn1">Season 1</button>
-        <button id="szn2">Season 2</button>
-        <button id="szn3">Season 3</button>
-        <button id="szn4">Season 4</button>
-        <button id="szn5">Season 5</button>
-        <button id="szn6">Season 6</button>
-        <button id="szn7">Season 7</button>
-        <button id="szn8">Season 8</button>
-        <button id="szn9">Season 9</button>
-        <button id="szn10">Season 10</button>
-        <button id="szn11">Season 11</button>
-    </div>
-    <div id="characters">
-        <button class="charBtn" id="Finn"><img src="pictures/Finn.png" height="100" width="100" id="finnPic"></button>
-        <button class="charBtn" id="Jake"><img src="pictures/Jake.png" height="100" width="100" id="jakePic"></button>
-        <button class="charBtn" id="bubblegum"><img src="pictures/Bubbleum.png" height="100" width="100" id="bubblegumPic"></button>
-        <button class="charBtn" id="flamePrincess"><img src="pictures/FlamePrincess.png" height="100" width="100" id="flamePic"></button>
-        <button class="charBtn" id="LSP"><img src="pictures/LSP.png" height="100" width="100" id="LSPPic"></button>
-        <button class="charBtn" id="Rainicorn"><img src="pictures/Rainicorn.png" height="100" width="100" id="rainicornPic"></button>
-        <button class="charBtn" id="Marciline"><img src="pictures/Marciline.png" height="100" width="100" id="marclinePic"></button>
-        <button class="charBtn" id="IceKing"><img src="pictures/IceKing.png" height="100" width="100" id="icePic"></button>
-        <button class="charBtn" id="BMO"><img src="pictures/BMO.png" height="100" width="100" id="BMOPic"></button>
-        <button class="charBtn" id="TreeTrunk"><img src="pictures/TreeTrunk.png" height="100" width="100" id="treePic"></button>
-    </div>
-    <div id="wordCloud"></div>
-    <div class="graph-btns">
-        <label class="switch graph-btn">
-            <input type="checkbox" id="hide-not-selected">
-            <span class="slider round"></span>
-        </label>
-        <p class="btn-label">Hide Non-selected Nodes</p>
-    </div>
-    <div id="graph-container">
-        <svg id="force-directed-graph"></svg>
-    </div>
-    <div id="graph-tooltip" class="tooltip"></div>
+    <div id="graphStuff">
+        <div class="graph-btns">
+            <label class="switch graph-btn">
+                <input type="checkbox" id="show-full-data">
+                <span class="slider round"></span>
+            </label>
+            <p class="btn-label">Hide Non-selected Nodes</p>
+        </div>
+        <div id="graph-container">
+            <svg id="force-directed-graph"></svg>
+        </div>
 
-    <input type="checkbox" id="scatter-x-scale" name="scatter-x-scale"></select>
-    <label for="scatter-x-scale">X-Axis Log Scale</label>
-    <input type="checkbox" id="scatter-y-scale" name="scatter-x-scale"></select>
-    <label for="scatter-x-scale">Y-Axis Log Scale</label>
-    <input type="checkbox" id="scatter-radius-scale" name="scatter-radius-scale"></select>
-    <label for="scatter-radius-scale">Radius Log Scale</label>
-    <svg id="scatterplot"></svg>
+    </div>
+    
+    <div id="visuals">
+        
+    <div id="wordcloudStuff">
+        <div id="menu">
+            <div id="seasons">
+                <!-- <button id="sznAll">Select All</button> -->
+                <div>
+                    <button id="szn1" class="seasonBtn">Season 1</button>
+                <button id="szn2" class="seasonBtn">Season 2</button>
+                <button id="szn3" class="seasonBtn">Season 3</button>
+                <button id="szn4" class="seasonBtn">Season 4</button>
+                <button id="szn5" class="seasonBtn">Season 5</button>
+
+                </div>
+                <div>
+                    <button id="szn6" class="seasonBtn">Season 6</button>
+                <button id="szn7" class="seasonBtn">Season 7</button>
+                <button id="szn8" class="seasonBtn">Season 8</button>
+                <button id="szn9" class="seasonBtn">Season 9</button>
+                <button id="szn10" class="seasonBtn">Season 10</button>
+    
+                </div>
+                
+            </div>
+            <div id="characters">
+                <div>
+                    <button class="charBtn" id="Finn" title="Finn"><img src="pictures/Finn.png" height="75" width="75" id="finnPic"></button>
+                    <button class="charBtn" id="Jake" title="Jake"><img src="pictures/Jake.png" height="75" width="75" id="jakePic"></button>
+                    <button class="charBtn" id="bubblegum" title="Princess Bubblegum"><img src="pictures/Bubbleum.png" height="75" width="75" id="bubblegumPic"></button>
+
+                <div>
+                    <button class="charBtn" id="flamePrincess" title="Flame Princess"><img src="pictures/FlamePrincess.png" height="75" width="75" id="flamePic"></button>
+                    <button class="charBtn" id="LSP" title="Lumpy Space Princess"><img src="pictures/LSP.png" height="75" width="75" id="LSPPic"></button>
+                    <button class="charBtn" id="Marciline" title="Marceline"><img src="pictures/Marciline.png" height="75" width="75" id="marclinePic"></button>
+        
+                </div>
+                 </div>
+                <div>
+                    <button class="charBtn" id="IceKing" title="Ice King"><img src="pictures/IceKing.png" height="75" width="75" id="icePic"></button>
+                    <button class="charBtn" id="BMO" title="BMO"><img src="pictures/BMO.png" height="75" width="75" id="BMOPic"></button>
+                    <button class="charBtn" id="TreeTrunk" title="Tree Trunks"><img src="pictures/TreeTrunk.png" height="75" width="75" id="treePic"></button>
+                </div>
+                 </div>
+
+        </div>
+       
+        <div id="wordCloud"></div>
+        
+    
+        </div>
+        <div id="scatterStuff">
+            <div>
+                <input type="checkbox" id="scatter-x-scale" name="scatter-x-scale"></select>
+        <label for="scatter-x-scale">X-Axis Log Scale</label>
+        <input type="checkbox" id="scatter-y-scale" name="scatter-x-scale"></select>
+        <label for="scatter-x-scale">Y-Axis Log Scale</label>
+        <input type="checkbox" id="scatter-radius-scale" name="scatter-radius-scale"></select>
+        <label for="scatter-radius-scale">Radius Log Scale</label>
+       
+    
+            </div>
+             <svg id="scatterplot"></svg>
+        </div>
+    
+    
+    </div>
+    
+    
+    
+
+    
 
     <svg id="histogram"></svg>
 
