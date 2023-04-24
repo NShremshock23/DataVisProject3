@@ -150,8 +150,8 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
 
         let scatterplot = new Scatterplot({
 			parentElement: '#scatterplot',
-			'containerHeight': 600,
-			'containerWidth': 800
+			'containerHeight': 360,
+			'containerWidth': 700
 		}, data)
 		scatterplot.updateVis()
 
