@@ -63,6 +63,9 @@ body {
  body{
   background: #F9F6F0;
  } 
+ label, input[type=checkbox] {
+  cursor: pointer;
+ }
 
  .charBtn{
   background: none;
@@ -141,12 +144,8 @@ body {
     fill: #CC93FA;
 }
 
-.char-ladyrainicorn {
-    fill: #FFB1FD;
-}
-
 .char-treetrunks {
-    fill: #B52C33;
+    fill: #E3E00A;
 }
 
 .char-marceline {

@@ -30,7 +30,7 @@ class ForceDirectedGraph {
                 .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
         vis.commonCharacters = ["finn", "jake", "bmo", "princessbubblegum", "flameprincess", "lumpyspaceprincess", "iceking", "marceline", "treetrunks"]
-        vis.colors = ['#1897CA', '#FF971A', '#59877C', '#FF61D0', '#FF4006', '#CC93FA', '#344980', '#851F1D', '#B52C33']
+        vis.colors = ['#1897CA', '#FF971A', '#59877C', '#FF61D0', '#FF4006', '#CC93FA', '#344980', '#851F1D', '#E3E00A']
 
         vis.colorScale = d3.scaleOrdinal()
             .domain(vis.commonCharacters)
