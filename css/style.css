@@ -112,7 +112,49 @@ body {
 
       }
 
+.char-finn {
+    fill: #1897CA;
+}
 
+.char-jake {
+    fill: #FF971A;
+}
+
+.char-princessbubblegum {
+    fill: #FF61D0;
+}
+
+.char-iceking {
+    fill: #344980;
+}
+
+.char-flameprincess {
+    fill: #FF4006;
+}
+
+.char-bmo {
+    fill: #59877C;
+}
+
+.char-lsp {
+    fill: #CC93FA;
+}
+
+.char-ladyrainicorn {
+    fill: #FFB1FD;
+}
+
+.char-treetrunks {
+    fill: #B52C33;
+}
+
+.char-marceline {
+    fill: #851F1D;
+}
+
+.char-other {
+    fill: #b4b4b4;
+}
 
 #Finn :hover{
   background: #4fbde8;

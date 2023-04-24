@@ -100,6 +100,8 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
                     ep['words_' + character.id] = countAllQuoteWords(d)
                 }
             }
+
+            // if 
         });
 
         let hideNotSelectedInput = document.getElementById('hide-not-selected')
