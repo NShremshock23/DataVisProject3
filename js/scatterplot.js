@@ -3,8 +3,8 @@ class Scatterplot {
     constructor(_config, _data) {
         this.config = {
             parentElement: _config.parentElement,
-            containerWidth: _config.containerWidth || 800,
-            containerHeight: _config.containerHeight || 600,
+            containerWidth: _config.containerWidth || 200,
+            containerHeight: _config.containerHeight || 50,
             margin: { top: 30, bottom: 50, right: 60, left: 60}
         }
 
@@ -39,14 +39,14 @@ class Scatterplot {
         vis.yScaleLinear = d3.scaleLinear()
             .range([vis.height, 0]);
         vis.radScaleLinear = d3.scaleLinear()
-            .range([2, 20]);
+            .range([2, 10]);
         
         vis.xScaleLog = d3.scaleLog()
             .range([0, vis.width]);
         vis.yScaleLog = d3.scaleLog()
             .range([vis.height, 0]);
         vis.radScaleLog = d3.scaleLog()
-            .range([0, 10]);
+            .range([0, 5]);
     
         // Initialize axes
         vis.xAxis = d3.axisBottom(vis.xScaleLinear)

@@ -22,11 +22,14 @@
     font-weight: 500;
     padding: 2px;
     color: #333;
-
 }
 
 #picture{
-    background-image: url(background.png);
+    background-image: url(background2.jpg);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
   }
 
   #wordcloudStuff{
@@ -35,6 +38,21 @@
   }
   #visuals{
     display: flex;
+    flex-direction: row;
+  }
+
+  #scatterStuff{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #graphStuff{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #graph-btns{
+    display:flex;
     flex-direction: row;
   }
   
@@ -121,5 +139,4 @@
 }
 #TreeTrunk :hover{
   background: #e8e55deb;
-
 }

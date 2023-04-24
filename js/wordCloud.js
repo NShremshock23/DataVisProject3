@@ -14,7 +14,6 @@ class WordCloud{
         this.allData = _data;
         this.data = _data;
 
-
         this.oneButton = document.getElementById('szn1');
         this.twoButton = document.getElementById('szn2');
         this.threeButton = document.getElementById('szn3');
@@ -25,7 +24,6 @@ class WordCloud{
         this.eightButton = document.getElementById('szn8');
         this.nineButton = document.getElementById('szn9');
         this.tenButton = document.getElementById('szn10');
-
 
         this.finnButton = document.getElementById('Finn');
         this.jakeButton = document.getElementById('Jake');
@@ -78,10 +76,8 @@ class WordCloud{
         this.characters = ["Finn", "BMO", "Princess Bubblegum","Flame Princess", "Jake", "LSP", "Ice King", "Marceline", "Tree Trunks"];
         this.character = "Finn";
 
-
         let seasonButton = [this.oneButton,this.twoButton, this.threeButton, this.fourButton, this.fiveButton, this.sixButton, this.sevenButton, this.eightButton, this.nineButton, this.tenButton];
         let sn = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-
         let seasonArr = new Map;
         let k = 0;
         seasonButton.forEach(b =>{
@@ -108,8 +104,8 @@ class WordCloud{
         let vis = this;
 
         vis.margin = {top: 10, right: 10, bottom: 10, left: 10};
-        vis.width = 350 - this.margin.left - vis.margin.right;
-        vis.height = 500 - vis.margin.top - vis.margin.bottom;
+        vis.width = 400 - this.margin.left - vis.margin.right;
+        vis.height = 360 - vis.margin.top - vis.margin.bottom;
 
         vis.svg = d3.select('#wordCloud').append("svg")
         .attr("width", vis.width + vis.margin.left + vis.margin.right)
@@ -156,6 +152,10 @@ class WordCloud{
                     vis.addSeasons(vis.seasonArray);
                     s.button.style.backgroundColor = 'rgba(204, 246, 204, 0.877)';
 
+                    // if(s.season == "all"){
+                    //     s.status = false;
+                    //     s.button.style.backgroundColor = '#F9F6F0';
+                    // }
                 }
                 
                 vis.updateVis();
