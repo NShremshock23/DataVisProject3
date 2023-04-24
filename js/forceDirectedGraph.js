@@ -28,6 +28,13 @@ class ForceDirectedGraph {
             .attr('height', vis.config.containerHeight)
             .append('g')
                 .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
+
+        vis.commonCharacters = ["finn", "jake", "bmo", "princessbubblegum", "flameprincess", "lumpyspaceprincess", "iceking", "marceline", "treetrunks"]
+        vis.colors = ['#1897CA', '#FF971A', '#59877C', '#FF61D0', '#FF4006', '#CC93FA', '#344980', '#851F1D', '#B52C33']
+
+        vis.colorScale = d3.scaleOrdinal()
+            .domain(vis.commonCharacters)
+            .range(vis.colors).unknown('black')
     }
 
     updateVis() {
@@ -36,10 +43,7 @@ class ForceDirectedGraph {
         vis.selectedNode = null;
 
         // Turning frequent characters into a list, sorting, and getting top 50
-        vis.data.frequentCharacters = Object.entries(vis.data.frequentCharacters).sort((a,b) => b[1] - a[1])
-        console.log(vis.data.showFullData)
-        if(!vis.data.showFullData)
-            vis.data.frequentCharacters = vis.data.frequentCharacters.splice(0,100)
+        vis.data.frequentCharacters = Object.entries(vis.data.frequentCharacters).sort((a,b) => b[1] - a[1]).splice(0,100)
 
         vis.data.links = []
         vis.data.nodes = []
@@ -65,7 +69,7 @@ class ForceDirectedGraph {
                     //     || (mainCharacters.includes(sourceId) && (targetId == "finn" || targetId == "jake"))){
                         // If the two characters have an existing link, increment the strength
                         if(vis.data.links.some(l => l.target == targetId && l.source == sourceId))
-                            vis.data.links.filter(l => (l.target == targetId && l.source == sourceId))[0].strength += 1
+                            vis.data.links.filter(l => (l.target == targetId && l.source == sourceId))[0].sceneCount += 1
     
                         // If the characters have a link in the opposite direction, skip (avoids double dipping links)
                         else if(vis.data.links.some(l => (l.target == sourceId && l.source == targetId)))
@@ -73,7 +77,7 @@ class ForceDirectedGraph {
     
                         // Otherwise create a new link
                         else 
-                            vis.data.links.push({ target: targetId, source: sourceId, strength: 1})
+                            vis.data.links.push({ target: targetId, source: sourceId, sceneCount: 1})
 
                     // }
                 }
@@ -82,7 +86,7 @@ class ForceDirectedGraph {
 
         // Go through links and calculate actual strength (occurrences together / total scenes of source + target)
         data.links.forEach(d => {
-            d.strength = d.strength / (vis.data.characterFreq[d.target] + vis.data.characterFreq[d.source])
+            d.strength = d.sceneCount / (vis.data.characterFreq[d.target] + vis.data.characterFreq[d.source])
         })
 
 
@@ -145,6 +149,7 @@ class ForceDirectedGraph {
         .join('circle')
           .attr('r', d => vis.radiusScale(d.sceneCount))
           .attr('opacity', 0.5)
+          .attr('fill', d => vis.colorScale(d.id))
           .attr('class', 'node')
 
     // Creates SVG for text labels
@@ -159,12 +164,47 @@ class ForceDirectedGraph {
             .attr('dx', 0)
             .attr('dy', d => -4 - vis.radiusScale(d.sceneCount))
 
-    vis.nodeElements.on('click', selected => vis.selectNode(selected))
-    vis.textElements.on('click', selected => vis.selectNode(selected))
+    vis.nodeElements
+        .on('click', selected => vis.selectNode(selected.target.__data__))
+        .on('mouseover', (event, d) => vis.showTooltip(event, d))
+        .on('mouseleave', () => vis.hideTooltip())
+    vis.textElements
+        .on('click', selected => vis.selectNode(selected.target.__data__))
+        .on('mouseover', (event, d) => vis.showTooltip(event, d))
+        .on('mouseleave', () => vis.hideTooltip())
 
+    vis.showTooltip = (event,d) => {
+        let tooltip = d3.select('#graph-tooltip')
+            .style('display', 'block')
+            .style('left', (event.pageX + 10) + 'px')   
+            .style('top', (event.pageY + 10) + 'px')
+            .style('text-align', 'left')
+
+            
+        if(vis.selectedNode != null && vis.selectedNode.id != d.id) {
+            let scenesTogether = vis.data.links.filter(l => (l.source.id == d.id && l.target.id == vis.selectedNode.id)
+            || (l.target.id == d.id && l.source.id == vis.selectedNode.id))
+
+            tooltip.html(`
+                <div class="tooltip-title">${d.label}</div>
+                <div>Scene Appearances: ${d.sceneCount}</div>
+                <div>Scene Appearances with ${vis.selectedNode.label}: ${scenesTogether.length > 0 ? scenesTogether[0].sceneCount : 0}</div>
+                `);
+        }
+        else {
+            tooltip.html(`
+                <div class="tooltip-title">${d.label}</div>
+                <div>Scene Appearances: ${d.sceneCount}</div>
+                `);
+        }
+    }
+    vis.hideTooltip = () => {
+        d3.select('#graph-tooltip').style('display', 'none');
+    }
     vis.selectNode = (selected) => {
-        if(vis.selectedNode == null || vis.selectedNode.target.__data__ != selected.target.__data__) {
-            const neighbors = vis.getNeighbors(selected.target.__data__, vis.data.links)
+        if(vis.selectedNode == null || vis.selectedNode!= selected) {
+            const neighbors = vis.getNeighbors(selected, vis.data.links)
+            vis.selectedNode = selected;
 
             vis.nodeElements
                 .transition()
@@ -174,12 +214,12 @@ class ForceDirectedGraph {
                 .attr('fill', node => vis.getTextColor(node, neighbors, vis.data.hideNotSelected))
             vis.linkElements
                 .transition()
-                .attr('stroke', link => vis.getLinkColor(selected.target.__data__, link))
-            vis.selectedNode = selected;
+                .attr('stroke', link => vis.getLinkColor(selected, link))
         }
         else {
             vis.nodeElements
                 .transition()
+                .attr('fill', node => vis.colorScale(node.id))
                 .attr('opacity', 0.5) 
             vis.textElements
                 .transition()
@@ -209,7 +249,7 @@ class ForceDirectedGraph {
     }
     
     getLinkColor(node, link) {
-        return (link.target.id === node.id || link.source.id === node.id) ? '#565656' : 'transparent'
+        return (link.target.id === node.id || link.source.id === node.id) ? '#a5a5a5' : 'transparent'
     }
 
     getTextColor(node, neighbors, hideNotSelected) {

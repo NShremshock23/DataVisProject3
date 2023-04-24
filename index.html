@@ -22,19 +22,12 @@
 </head>
 <body>
     <div id="graphStuff">
-        <div id="graph-btns">
-            <label class="switch graph-btn">
-                <input type="checkbox" id="show-full-data">
-                <span class="slider round"></span>
-            </label>
+        <div class="graph-btns">
             <label class="switch graph-btn">
                 <input type="checkbox" id="hide-not-selected">
                 <span class="slider round"></span>
             </label>
-            <div id="zoom-buttons" class="graph-btn">
-                <button class="zoom zoom-in">+</button>
-                <button class="zoom zoom-out">-</button>
-            </div>
+            <p class="btn-label">Hide Non-selected Nodes</p>
         </div>
         <div id="graph-container">
             <svg id="force-directed-graph"></svg>
@@ -116,7 +109,7 @@
 
     <svg id="histogram"></svg>
 
-    <div id="tooltip"></div>
+    <div id="tooltip" class="tooltip"></div>
 
     <script src="js/zdog.dist.js"></script>
     <script src="js/ZdogPractice.js"></script>
