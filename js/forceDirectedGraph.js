@@ -34,7 +34,7 @@ class ForceDirectedGraph {
 
         vis.colorScale = d3.scaleOrdinal()
             .domain(vis.commonCharacters)
-            .range(vis.colors).unknown('black')
+            .range(vis.colors).unknown('#303030')
     }
 
     updateVis() {
@@ -63,23 +63,16 @@ class ForceDirectedGraph {
                 for(let source of d[1].filter(c => getId(c) != targetId && vis.data.frequentCharacters.some(f => getId(f[0]) == getId(c)))) {
 
                     let sourceId = getId(source) // get id form of source
+                    if(vis.data.links.some(l => l.target == targetId && l.source == sourceId))
+                        vis.data.links.filter(l => (l.target == targetId && l.source == sourceId))[0].sceneCount += 1
 
-                    // if((!((sourceId == "finn" || sourceId == "jake") || (targetId == "finn" || targetId == "jake"))
-                    //     || mainCharacters.includes(targetId) && (sourceId == "finn" || sourceId == "jake"))
-                    //     || (mainCharacters.includes(sourceId) && (targetId == "finn" || targetId == "jake"))){
-                        // If the two characters have an existing link, increment the strength
-                        if(vis.data.links.some(l => l.target == targetId && l.source == sourceId))
-                            vis.data.links.filter(l => (l.target == targetId && l.source == sourceId))[0].sceneCount += 1
-    
-                        // If the characters have a link in the opposite direction, skip (avoids double dipping links)
-                        else if(vis.data.links.some(l => (l.target == sourceId && l.source == targetId)))
-                            continue
-    
-                        // Otherwise create a new link
-                        else 
-                            vis.data.links.push({ target: targetId, source: sourceId, sceneCount: 1})
+                    // If the characters have a link in the opposite direction, skip (avoids double dipping links)
+                    else if(vis.data.links.some(l => (l.target == sourceId && l.source == targetId)))
+                        continue
 
-                    // }
+                    // Otherwise create a new link
+                    else 
+                        vis.data.links.push({ target: targetId, source: sourceId, sceneCount: 1})
                 }
             }
         })
@@ -130,9 +123,6 @@ class ForceDirectedGraph {
                 .attr('y2', l => l.target.y)
         }
 
-    vis.chart.selectAll('line')
-    vis.chart.selectAll('circle')
-    vis.chart.selectAll('text')
     // Creates SVG for link lines
     vis.linkElements = vis.chart.append('g')
         .selectAll('line')
@@ -150,7 +140,7 @@ class ForceDirectedGraph {
           .attr('r', d => vis.radiusScale(d.sceneCount))
           .attr('opacity', 0.5)
           .attr('fill', d => vis.colorScale(d.id))
-          .attr('class', 'node')
+          .attr('class', n => n.id + "-node node")
 
     // Creates SVG for text labels
     vis.textElements = vis.chart.append('g')
@@ -158,7 +148,7 @@ class ForceDirectedGraph {
         .data(vis.data.nodes)
         .join('text')
         .text(n => n.label)
-            .attr('class', "label")
+            .attr('class', n => n.id + "-label label")
             .attr('font-size', 15)
             .attr('text-anchor', "middle")
             .attr('dx', 0)
@@ -167,11 +157,11 @@ class ForceDirectedGraph {
     vis.nodeElements
         .on('click', selected => vis.selectNode(selected.target.__data__))
         .on('mouseover', (event, d) => vis.showTooltip(event, d))
-        .on('mouseleave', () => vis.hideTooltip())
+        .on('mouseleave', (event, d) => vis.hideTooltip(d))
     vis.textElements
         .on('click', selected => vis.selectNode(selected.target.__data__))
         .on('mouseover', (event, d) => vis.showTooltip(event, d))
-        .on('mouseleave', () => vis.hideTooltip())
+        .on('mouseleave', (event, d) => vis.hideTooltip(d))
 
     vis.showTooltip = (event,d) => {
         let tooltip = d3.select('#graph-tooltip')
@@ -180,6 +170,10 @@ class ForceDirectedGraph {
             .style('top', (event.pageY + 10) + 'px')
             .style('text-align', 'left')
 
+        if(vis.selectedNode == null || vis.selectedNode.id != d.id){
+            let elem = d3.select('.' + d.id + "-node")
+            elem.attr('opacity', parseFloat(elem.attr('opacity')) + 0.25)
+        }
             
         if(vis.selectedNode != null && vis.selectedNode.id != d.id) {
             let scenesTogether = vis.data.links.filter(l => (l.source.id == d.id && l.target.id == vis.selectedNode.id)
@@ -198,11 +192,17 @@ class ForceDirectedGraph {
                 `);
         }
     }
-    vis.hideTooltip = () => {
+    vis.hideTooltip = (d) => {
         d3.select('#graph-tooltip').style('display', 'none');
+
+        console.log(d)
+        if(vis.selectedNode == null || vis.selectedNode.id != d.id){
+            let elem = d3.select('.' + d.id + "-node")
+            elem.attr('opacity', parseFloat(elem.attr('opacity')) - 0.25)
+        }
     }
     vis.selectNode = (selected) => {
-        if(vis.selectedNode == null || vis.selectedNode!= selected) {
+        if(vis.selectedNode == null || vis.selectedNode != selected) {
             const neighbors = vis.getNeighbors(selected, vis.data.links)
             vis.selectedNode = selected;
 
