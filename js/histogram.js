@@ -206,10 +206,8 @@ class Histogram {
                                 .style('top', (event.pageY + 10) + 'px')
                                 .style('text-align', 'left')
                                 .html(`
-                                    <div class="tooltip-title">${x.data.id}</div>
-                                    <div>Character: TODO</div>
+                                    <div class="tooltip-title">${x.data.id}: ${x.data.title}</div>
                                     <div>Lines of Dialog: ${x[1] - x[0]}</div>
-                                    <div>Total Words Spoken: TODO</div>
                                 `);
                         })
                         .on('mouseleave', () => {

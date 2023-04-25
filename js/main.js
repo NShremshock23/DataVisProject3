@@ -35,6 +35,7 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
             if (!ep) {
                 ep = {
                     'id': (d.season + "-" + d.ep_num),
+                    'title': d.ep_title,
                     'linesTotal': 1,
                     'wordsTotal': countAllQuoteWords(d),
                     'scenes': d.scene_num
