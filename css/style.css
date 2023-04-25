@@ -1,4 +1,7 @@
-#tooltip {
+body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.tooltip {
     position: absolute;
     background: #f6eeee;
     box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
@@ -60,6 +63,9 @@
  body{
   background: #F9F6F0;
  } 
+ label, input[type=checkbox] {
+  cursor: pointer;
+ }
 
  .charBtn{
   background: none;
@@ -73,7 +79,7 @@
   background: rgba(204, 246, 204, 0.877);
   border: none;
   font-size: x-small;
-
+  cursor: pointer;
  }
 
 
@@ -110,7 +116,45 @@
 
       }
 
+.char-finn {
+    fill: #1897CA;
+}
 
+.char-jake {
+    fill: #FF971A;
+}
+
+.char-princessbubblegum {
+    fill: #FF61D0;
+}
+
+.char-iceking {
+    fill: #344980;
+}
+
+.char-flameprincess {
+    fill: #FF4006;
+}
+
+.char-bmo {
+    fill: #59877C;
+}
+
+.char-lsp {
+    fill: #CC93FA;
+}
+
+.char-treetrunks {
+    fill: #E3E00A;
+}
+
+.char-marceline {
+    fill: #851F1D;
+}
+
+.char-other {
+    fill: #b4b4b4;
+}
 
 #Finn :hover{
   background: #4fbde8;

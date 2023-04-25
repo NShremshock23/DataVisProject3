@@ -22,24 +22,17 @@
 </head>
 <body>
     <div id="graphStuff">
-        <div id="graph-btns">
-            <label class="switch graph-btn">
-                <input type="checkbox" id="show-full-data">
-                <span class="slider round"></span>
-            </label>
+        <div class="graph-btns">
             <label class="switch graph-btn">
                 <input type="checkbox" id="hide-not-selected">
                 <span class="slider round"></span>
             </label>
-            <div id="zoom-buttons" class="graph-btn">
-                <button class="zoom zoom-in">+</button>
-                <button class="zoom zoom-out">-</button>
-            </div>
+            <p class="btn-label">Hide Non-selected Nodes</p>
         </div>
         <div id="graph-container">
             <svg id="force-directed-graph"></svg>
         </div>
-
+        <div id="graph-tooltip" class="tooltip"></div>
     </div>
     
     <div id="visuals">
@@ -90,14 +83,14 @@
        
         <div id="wordCloud"></div>
         
-    
+        
         </div>
         <div id="scatterStuff">
             <div>
                 <input type="checkbox" id="scatter-x-scale" name="scatter-x-scale"></select>
         <label for="scatter-x-scale">X-Axis Log Scale</label>
-        <input type="checkbox" id="scatter-y-scale" name="scatter-x-scale"></select>
-        <label for="scatter-x-scale">Y-Axis Log Scale</label>
+        <input type="checkbox" id="scatter-y-scale" name="scatter-y-scale"></select>
+        <label for="scatter-y-scale">Y-Axis Log Scale</label>
         <input type="checkbox" id="scatter-radius-scale" name="scatter-radius-scale"></select>
         <label for="scatter-radius-scale">Radius Log Scale</label>
        
@@ -114,9 +107,13 @@
 
     
 
+    <input type="checkbox" id="histogram-y-scale" name="histogram-y-scale"></select>
+    <label for="histogram-y-scale">Y-Axis Log Scale</label>
+    <input type="checkbox" id="histogram-other-toggle" name="histogram-other-toggle" checked></select>
+    <label for="histogram-other-toggle">Include 'Other' Dialog</label>
     <svg id="histogram"></svg>
 
-    <div id="tooltip"></div>
+    <div id="tooltip" class="tooltip"></div>
 
     <script src="js/zdog.dist.js"></script>
     <script src="js/FinnModel.js"></script>

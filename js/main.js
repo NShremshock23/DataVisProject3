@@ -35,6 +35,7 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
             if (!ep) {
                 ep = {
                     'id': (d.season + "-" + d.ep_num),
+                    'title': d.ep_title,
                     'linesTotal': 1,
                     'wordsTotal': countAllQuoteWords(d),
                     'scenes': d.scene_num
@@ -100,13 +101,11 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
                     ep['words_' + character.id] = countAllQuoteWords(d)
                 }
             }
+
+            // if 
         });
 
-        let showFullDataInput = document.getElementById('show-full-data')
         let hideNotSelectedInput = document.getElementById('hide-not-selected')
-
-        
-        data.showFullData = showFullDataInput.checked
         data.hideNotSelected = hideNotSelectedInput.checked
 
         // Get list of scenes in format {season-episode-scene, characters in scene}
@@ -143,8 +142,8 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
 
         let forceDirectedGraph = new ForceDirectedGraph({
 			parentElement: '#force-directed-graph',
-			'containerHeight': 11000,
-			'containerWidth': 8500
+			'containerHeight': 3000,
+			'containerWidth': 3200
 		}, data)
 		forceDirectedGraph.updateVis()
 
@@ -165,15 +164,10 @@ d3.tsv('data/adventure_time_all_eps_with_scene_num.tsv')
         const graphContainer = document.querySelector("#graph-container")
 
         graphContainer.scrollTo({
-            left: 2750,
-            top: 4350,
+            left: 700,
+            top: 600,
             behavior: "smooth"
         });
-
-        showFullDataInput.addEventListener('change', (event) => {
-            data.showFullData = !data.showFullData
-            forceDirectedGraph.updateVis()
-        })
 
         hideNotSelectedInput.addEventListener('change', (event) => {
             data.hideNotSelected = !data.hideNotSelected
